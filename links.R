@@ -1,58 +1,59 @@
 source("vars.R")
 
-##### Create mapping list from mapping matrice
+##### GETMAPS: Protein to Symbol for STRING, Entrez to SYMBOL for INET
 
-getMapLists <- function(topologies, mapTypes) {
+getMaps <- function(topologies) {
   maps <- list()
   for(t in topologies) {
-    fname <- paste("map_", t, "_unique.csv", sep="")
-    maps[[t]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
+    fname <- paste("map_", t, ".csv", sep="")
+    df <- as.data.frame(fread(fname, header = TRUE, sep = ','))
     if(t == "inet") {
-      maps[[t]] <- transform(maps[[t]], ENTREZID = as.character(ENTREZID))
+      df <- transform(df, ENTREZID = as.character(ENTREZID))
+    }
+    for(r in 1:nrow(df)) {
+      maps[[t]][df[r, 1]] <- df[r, 2]
     }
   }
-  mapLists <- list()
-  for(m in mapTypes) {
-    
-    mapLists[[m]] <- list()
-    
-    if(substr(m,1,1) == "p") t <- "string" else t <- "inet"
-    if(substr(m,3,3) == "s") val <- 2 else val <- 3
-    
-    tmp <- maps[[t]]
-    for(i in 1:nrow(tmp)) {
-      mapLists[[m]][tmp[i, 1]] <- tmp[i, val]
-    }
-  }
-  mapLists <- lapply(mapLists, function(x) x[!is.na(x)]) # remove NA values
-  return(mapLists)
+  maps <- lapply(maps, function(x) x[!is.na(x)]) # remove NA values
+  return(maps)
 }
 
-mapLists <- getMapLists(topologies, mapTypes)
+maps <- getMaps(topologies)
 
 ##### Note that elinks_inet and plinks_string are downloaded files.
-elinks_inet <- as.data.frame(fread("LINKS/elinks_inet.csv", header = TRUE, sep = ','))
-plinks_string <- as.data.frame(fread("LINKS/plinks_string.csv", header = TRUE, sep = ' '))
 
-createLinks <- function(df.links, mapLists, mapType) {
+removeReverseDuplicates <- function(plinksDup) {
+  plinks <- plinksDup
+  start_time <- proc.time()
+  #plinks <- plinks[!duplicated(apply(plinks, 1, function(x) paste(sort(x), collapse='_'))), ]
+  plinks <- plinks[plinks[,1] < plinks[,2], ]
+  elapsed_time <- proc.time() - start_time
+  cat("UNIQUED IN", elapsed_time[[3]], "SECONDS\n")
+  fname <- "LINKS/plinks_string.csv"
+  cat("WRITING", fname, "...\n")
+  write.csv(plinks, fname, row.names = FALSE)
+  return(plinks)
+}
+
+readPlinks <- function() {
+  fname <- "LINKS/plinks_string.csv"
+  if(file.exists(fname)) {
+    cat("READING", fname, "...\n")
+    plinks <- as.data.frame(fread(fname, header = TRUE, sep = ','))
+  } else {
+    cat("CREATING", fname, "...\n")
+    plinksDup <- as.data.frame(fread("LINKS/plinks_string_dup.csv", header = TRUE, sep = ' '))
+    plinks <- removeReverseDuplicates(plinksDup)
+  }
+  return(plinks)
+}
+
+createLinks <- function(dfLinks, map) {
   portion <- 100000
   i <- 1
-  n <- nrow(df.links)
-  df.new_links <- df.links
-
-  if(substr(mapType, 1, 1) == "p") {
-    old_cols <- c("protein1", "protein2")
-  } else {
-    old_cols <- c("entrez1", "entrez2")
-  }
-  
-  if(substr(mapType, 3, 3) == "s") {
-    new_cols <- c("symbol1", "symbol2")
-  } else {
-    new_cols <- c("entrez1", "entrez2")
-  }
-  
-  df.new_links[, new_cols] <- NA
+  n <- nrow(dfLinks)
+  dfNewLinks <- dfLinks
+  dfNewLinks[, c("symbol1", "symbol2")] <- NA
 
   while(i <= n) {
     j <- i + portion - 1
@@ -61,52 +62,42 @@ createLinks <- function(df.links, mapLists, mapType) {
     }
     cat("range", i, "to", j, "...\n")
 
-    df.new_links[i:j,new_cols[1]] <- 
-      as.vector(as.character(mapLists[[mapType]][df.new_links[i:j,old_cols[1]]]))
-    df.new_links[i:j,new_cols[2]] <- 
-      as.vector(as.character(mapLists[[mapType]][df.new_links[i:j,old_cols[2]]]))
+    dfNewLinks[i:j, "symbol1"] <- map[as.character(dfNewLinks[i:j, 1])]
+    dfNewLinks[i:j, "symbol2"] <- map[as.character(dfNewLinks[i:j, 2])]
 
     i <- i+portion
   }
 
-  df.new_links <- df.new_links[, c(new_cols, "combined_score")]
-  n_old <- nrow(df.new_links)
-  df.new_links <- df.new_links[df.new_links[, new_cols[1]] != "NULL", ] # remove NULL rows
-  df.new_links <- df.new_links[df.new_links[, new_cols[2]] != "NULL", ] # remove NULL rows
-  n_new <- nrow(df.new_links)
+  dfNewLinks <- dfNewLinks[, c("symbol1", "symbol2", "combined_score")]
+  nOld <- nrow(dfNewLinks)
+  dfNewLinks <- dfNewLinks[!is.na(dfNewLinks[, "symbol1"]), ] # remove NA rows
+  dfNewLinks <- dfNewLinks[!is.na(dfNewLinks[, "symbol2"]), ] # remove NA rows
+  nNew <- nrow(dfNewLinks)
   
-  cat("*********", n_old-n_new, "NULL rows are removed!\n")
-  return(df.new_links)
+  cat("*********", nOld-nNew, "NULL rows are removed!\n")
+  return(dfNewLinks)
 }
 
-getLinks <- function(df.links, mapLists, mapType) {
-  if(substr(mapType, 1, 1) == "p") {
-    # string mapping
-    fname = paste("LINKS/", substr(mapType, 3, 3), "links_string.csv", sep="")
-    
+getSlinks <- function(maps) {
+  slinks <- list()
+  for(m in names(maps)) {
+    fname = paste("LINKS/slinks_", m, ".csv", sep="")
     if(file.exists(fname)) {
-      print(paste("READING FROM -> ", fname, sep=""))
-      return(as.data.frame(fread(fname, header = TRUE, sep = ',')))
+      cat(paste("READING FROM -> ", fname, sep=""), "\n")
+      slinks[[m]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
+    } else {
+      cat(paste("CREATING -> ", fname, sep = ""), "\n")
+      if(m == "string") {
+        xlinks <- readPlinks()
+      } else {
+        xlinks <- as.data.frame(fread("LINKS/elinks_inet.csv", header = TRUE, sep = ','))
+      }
+      slinks[[m]] <- createLinks(xlinks, maps[[m]])
+      cat("WRITING", fname, "\n")
+      write.csv(slinks[[m]], fname, row.names = FALSE)
     }
-    print(paste("CREATING -> ", fname, sep=""))
-    df.temp_links <- createLinks(df.links, mapLists, mapType)
-    write.csv(df.temp_links, fname, row.names = FALSE)
-    return(df.temp_links)
-    
-  } else {
-    # inet mapping
-    fname = "LINKS/slinks_inet.csv"
-    if(file.exists(fname)) {
-      print(paste("READING FROM -> ", fname, sep=""))
-      return(as.data.frame(fread(fname, header = TRUE, sep = ',')))
-    }
-    print(paste("CREATING -> ", fname, sep=""))
-    df.temp_links <- createLinks(df.links, mapLists, mapType)
-    write.csv(df.temp_links, fname, row.names = FALSE)
-    return(df.temp_links)
   }
+  return(slinks)
 }
 
-elinks_string <- getLinks(plinks_string, mapLists, "p2e")
-slinks_string <- getLinks(plinks_string, mapLists, "p2s")
-slinks_inet   <- getLinks(elinks_inet, mapLists, "e2s")
+slinks <- getSlinks(maps)

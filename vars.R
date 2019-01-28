@@ -1,14 +1,14 @@
 library(readr)
 library(rstudioapi)
 library(data.table) # fread
-library(org.Hs.eg.db) # to get entrez ids
-library(GOSemSim)
+library(org.Hs.eg.db) # BiocManager::install("org.Hs.eg.db", version = "3.8")
+library(GOSemSim) # BiocManager::install("GOSemSim", version = "3.8")
 
 rm(list=ls())
 setwd(dirname(getSourceEditorContext()$path))
 
-mapTypes <- c("p2s", "p2e", "e2s")
-idTypes <- c("s", "e")
+raw <- as.data.frame(fread("RAW.csv", header = TRUE, sep = ','))
+
 ontTypes <- c("MF", "BP", "CC")
 measures <- c("Resnik", "Lin", "Rel", "Jiang", "Wang")
 topologies <- c("string", "inet")
@@ -26,12 +26,8 @@ intervals <- list( # control excluded intervals
 
 cutoffs <- list(
   "10" = list(
-    "s" = list(
-      "string" = 407,
-      "inet" = 0.168),
-    "e" = list(
-      "string" = 358,
-      "inet" = 0.176)
+    "string" = 407,
+    "inet" = 0.175
   ))
 
 FC <- 1
@@ -43,4 +39,17 @@ Stringify <- function(n) {
   s <- paste(substr(n, 1, regexpr("\\.", n)[1]-1), 
              substr(n, regexpr("\\.", n)[1]+1, nchar(n)), sep="")
   return(s)
+}
+
+FormatDf <- function(df) {
+  df[is.na(df)] <- ""
+  df[df == "-"] <- ""
+  df[df == "."] <- ""
+  df[df == "Null"] <- ""
+  df[df == "--Null"] <- ""
+  df[df == "EMPTY"] <- ""
+  df[df == "--empty"] <- ""
+  df[df == "--unknown"] <- ""
+  df[df == "Dye Marker"] <- ""
+  return (df)
 }

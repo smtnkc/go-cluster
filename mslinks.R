@@ -1,189 +1,154 @@
 source("vars.R")
 
-##################################################
-
-readRaws <- function(idTypes) {
-  raws <- list()  
-  for(i in idTypes) {
-    fname <- paste(i, "_RAW.csv", sep="")
-    raws[[i]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
+readSlinks <- function(topologies) {
+  slinks <- list()
+  for(t in topologies) {
+    fname <- paste("LINKS/slinks_", t, ".csv", sep="")
+    cat("Reading", fname, "...\n")
+    slinks[[t]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
   }
-  return(raws)
+  return(slinks)
 }
 
-raws <- readRaws(idTypes)
+slinks <- readSlinks(topologies)
 
-readLinks <- function(idTypes, topologies) {
-  links <- list()
-  for(i in idTypes) {
-    for(t in topologies) {
-      fname <- paste("LINKS/", i, "links_", t, ".csv", sep="")
-      cat("Reading", fname, "...\n")
-      links[[i]][[t]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
-      
-      # convert integer entrezID columns to character
-      if(i == "e") {
-        links[[i]][[t]][, 1] <- as.character(links[[i]][[t]][, 1])
-        links[[i]][[t]][, 2] <- as.character(links[[i]][[t]][, 2])
-      }
-    }
-  }
-  return(links)
-}
+################################################
 
-links <- readLinks(idTypes, topologies)
-
-getNodes <- function(links) {
+getNodes <- function(slinks) {
   nodes <- list()
-  for(i in names(links)) {
-    for(t in names(links[[i]])) {
-      nodes[[i]][[t]] <- union(links[[i]][[t]][,1], links[[i]][[t]][,2])
-    }
+  for(t in names(slinks)) {
+    nodes[[t]] <- union(slinks[[t]][, 1], slinks[[t]][, 2])
   }
   return(nodes)
 }
 
-nodes <- getNodes(links)
+nodes <- getNodes(slinks)
 
 ################################################
 
-readDegs <- function(idTypes, FC, pval, subjects) {
+readDegs <- function(FC, pval, subjects) {
   degs <- list()
-  
-  for(i in idTypes) {
-    for(s in subjects) {
-      fname <- paste("DEGs/", i, "_", s, "_fc", Stringify(FC), 
-                     "_p", Stringify(pval), ".csv", sep="")
-      cat("Reading", fname, "...\n")
-      degs[[i]][[s]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))[,1]
-    }
+  for(s in subjects) {
+    fname <- paste("DEGs/", s, "_fc", Stringify(FC), 
+                   "_p", Stringify(pval), ".csv", sep = "")
+    cat("Reading", fname, "...\n")
+    degs[[s]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))[,1]
   }
   return(degs)
 }
 
-degs <- readDegs(idTypes, FC, P_VAL, subjects)
+degs <- readDegs(FC, P_VAL, subjects)
 
 ########## get raw vals for degs:
 
-getDegVals <- function(degs, raws, intervals) {
+getDegVals <- function(degs, raw, intervals) {
   degVals <- list()
-  for(i in names(degs)) {
-    for(s in names(degs[[i]])) {
-      tmp <- raws[[i]][raws[[i]][, 1] %in% degs[[i]][[s]], intervals[[s]]]
-      row.names(tmp) <- tmp[, 1] # set rownames as first column
-      tmp <- tmp[, -1] # remove first column
-      degVals[[i]][[s]] <- tmp
-    }
+  for(s in names(degs)) {
+    df <- raw[raw[, 1] %in% degs[[s]], intervals[[s]]]
+    row.names(df) <- df[, 1] # set rownames as first column
+    df <- df[, -1] # remove first column
+    degVals[[s]] <- df
   }
   return(degVals)
 }
 
-degVals <- getDegVals(degs, raws, intervals)
+degVals <- getDegVals(degs, raw, intervals)
 
 ####################################### Filter links
 
-FilterLinks <- function(df.links, filterIds, cutoff) {
+FilterLinks <- function(dfLinks, filterIds, cutoff) {
   cat("For cutoff =", cutoff,"\n")
   # Omit links of unmapped genes
-  df.result <- df.links
-  all <- nrow(df.result)
-  cat("Total links =", all,"\n")
+  dfTmp <- dfLinks
+  nAll <- nrow(dfTmp)
+  cat("Total links =", nAll,"\n")
   
-  df.result <- df.result[df.result[, 1] %in% filterIds, ]
-  df.result <- df.result[df.result[, 2] %in% filterIds, ]
-  mapped <- nrow(df.result)
-  cat("Mapped links =", mapped, "   ", round(mapped*100/all, 1), "%\n")
+  dfTmp <- dfTmp[dfTmp[, 1] %in% filterIds, ]
+  dfTmp <- dfTmp[dfTmp[, 2] %in% filterIds, ]
+  nMapped <- nrow(dfTmp)
+  cat("Mapped links =", nMapped, "   ", round(nMapped*100/nAll, 1), "%\n")
   
   # Omit insignificant links
   if(!missing(cutoff) && !is.null(cutoff))
-    df.result <- df.result[df.result[,3] >= cutoff, ]
-  sig <- nrow(df.result)
-  cat("Significant links =", sig, "   ", round(sig*100/all,1), "%\n\n")
+    dfTmp <- dfTmp[dfTmp[, 3] >= cutoff, ]
+  nSig <- nrow(dfTmp)
+  cat("Significant links =", nSig, "   ", round(nSig*100/nAll,1), "%\n\n")
   
-  row.names(df.result) <- NULL
-  return(df.result)
+  row.names(dfTmp) <- NULL
+  return(dfTmp)
 }
 
-getMsLinks <- function(links, raws, cutoff) {
-  ms_links <- list()
-  for(i in names(links)) {
-    for(t in names(links[[i]])) {
-      ms_links[[i]][[t]] <- FilterLinks(links[[i]][[t]], raws[[i]][,1], cutoff[[i]][[t]])
-    }
+getMsLinks <- function(slinks, raw, cutoff) {
+  msLinks <- list()
+  for(t in names(slinks)) {
+    msLinks[[t]] <- FilterLinks(slinks[[t]], raw[, 1], cutoff[[t]])
   }
-  return(ms_links)
+  return(msLinks)
 }
 
-ms_links <- getMsLinks(links, raws, cutoffs[[TOP_N]])
+msLinks <- getMsLinks(slinks, raw, cutoffs[[TOP_N]])
 
-ms_nodes <- getNodes(ms_links)
+msNodes <- getNodes(msLinks)
 
 ################# MSDEGS
 
-getMsDegs <- function(idTypes, topologies, subjects, ms_nodes) {
-  ms_degs <- list()
-  for(i in idTypes) {
-    for(t in topologies) {
-      for(s in subjects) {
-        D <- degVals[[i]][[s]]
-        ms_degs[[i]][[t]][[s]] <- D[row.names(D) %in% ms_nodes[[i]][[t]], ] 
-      }
+getMsDegVals <- function(msNodes, degVals) {
+  msDegs <- list()
+  for(t in names(msNodes)) {
+    for(s in names(degVals)) {
+      DV <- degVals[[s]]
+      msDegs[[t]][[s]] <- DV[row.names(DV) %in% msNodes[[t]], ] 
     }
   }
-  return(ms_degs)
+  return(msDegs)
 }
 
-ms_degs <- getMsDegs(idTypes, topologies, subjects, ms_nodes)
+msDegVals <- getMsDegVals(msNodes, degVals)
 
 ######### get msdeglinks:
 
-GetMSDegLinks <- function(ms_links, ms_degs) {
-  ms_deglinks <- list()
-  for(i in names(ms_degs)) {
-    for(t in names(ms_degs[[i]])) {
-      for(s in names(ms_degs[[i]][[t]])) {
-        L <- ms_links[[i]][[t]]
-        D <- ms_degs[[i]][[t]][[s]]
-        tmp <- L[L[,1] %in% row.names(D), 1:2]
-        tmp <- tmp[tmp[,2] %in% row.names(D), ]
-        ms_deglinks[[i]][[t]][[s]] <- tmp
-      }
+getMsDegLinks <- function(msLinks, msDegVals) {
+  msDegLinks <- list()
+  for(t in names(msDegVals)) {
+    for(s in names(msDegVals[[t]])) {
+      L <- msLinks[[t]]
+      DV <- msDegVals[[t]][[s]]
+      df <- L[L[,1] %in% row.names(DV), 1:2]
+      df <- df[df[,2] %in% row.names(DV), ]
+      msDegLinks[[t]][[s]] <- df
     }
   }
-  return(ms_deglinks)
+  return(msDegLinks)
 }
 
-ms_deglinks <- GetMSDegLinks(ms_links, ms_degs)
+msDegLinks <- getMsDegLinks(msLinks, msDegVals)
 
 ######### get msdegnodes:
 
-GetMSDegNodes <- function(ms_deglinks) {
-  ms_degnodes <- list()
-  for(i in names(ms_deglinks)) {
-    for(t in names(ms_deglinks[[i]])) {
-      for(s in names(ms_deglinks[[i]][[t]])) {
-        df <- ms_deglinks[[i]][[t]][[s]]
-        genes <- unique(as.character(rbind(df[, 1], df[, 2])))
-        ms_degnodes[[i]][[t]][[s]] <- genes
-      }
+getMsDegNodes <- function(msDegLinks) {
+  msDegNodes <- list()
+  for(t in names(msDegLinks)) {
+    for(s in names(msDegLinks[[t]])) {
+      df <- msDegLinks[[t]][[s]]
+      genes <- unique(as.character(rbind(df[, 1], df[, 2])))
+      msDegNodes[[t]][[s]] <- genes
     }
   }
-  return(ms_degnodes)
+  return(msDegNodes)
 }
 
-ms_degnodes <- GetMSDegNodes(ms_deglinks)
+msDegNodes <- getMsDegNodes(msDegLinks)
 
 ######### write links:
 
-WriteLinks <- function(ms_deglinks, p, top) {
-  for(i in names(ms_deglinks)) {
-    for(t in names(ms_deglinks[[i]])) {
-      for(s in names(ms_deglinks[[i]][[t]])) {
-        out_file = paste("RES/", i, "_", t, "_", s, "_P", Stringify(p), "_T", top,".csv", sep="")
-        write.csv(ms_deglinks[[i]][[t]][[s]], out_file, row.names = FALSE)
-      }
+WriteLinks <- function(msDegLinks, p, top) {
+  for(t in names(msDegLinks)) {
+    for(s in names(msDegLinks[[t]])) {
+      outname = paste("RES/", t, "_", s, "_P",
+                       Stringify(p), "_T", top, ".csv", sep = "")
+      write.csv(msDegLinks[[t]][[s]], outname, row.names = FALSE)
     }
   }
 }
 
-WriteLinks(ms_deglinks, p=P_VAL, top=TOP_N)
+WriteLinks(msDegLinks, p=P_VAL, top=TOP_N)

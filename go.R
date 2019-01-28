@@ -1,35 +1,24 @@
 source("vars.R")
 
-##################################################
-
-readMsDegLinks <- function(idTypes, topologies, subjects, P_VAL, TOP_N) {
-  ms_deglinks <- list()
-  for(i in idTypes) {
-    for(t in topologies) {
-      for(s in subjects) {
-        fname <- paste("RES/", i, "_", t, "_", s, "_P", Stringify(P_VAL),
-                       "_T", Stringify(TOP_N), ".csv", sep ="")
-        ms_deglinks[[i]][[t]][[s]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
-      }
+readMsDegLinks <- function(topologies, subjects, p, top) {
+  msDegLinks <- list()
+  for(t in topologies) {
+    for(s in subjects) {
+      fname <- paste("RES/", t, "_", s, "_P", Stringify(p),
+                     "_T", Stringify(top), ".csv", sep ="")
+      msDegLinks[[t]][[s]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
     }
   }
-  return(ms_deglinks)
+  return(msDegLinks)
 }
 
-ms_deglinks <- readMsDegLinks(idTypes, topologies, subjects, P_VAL, TOP_N)
+msDegLinks <- readMsDegLinks(topologies, subjects, P_VAL, TOP_N)
 
 getOntologies <- function(ontTypes) {
   ontologies <- list()
-  ont <- list()
   for(o in ontTypes) {
-    ont[[o]] <- godata('org.Hs.eg.db', keytype = "SYMBOL", ont = o)
+    ontologies[[o]] <- godata('org.Hs.eg.db', keytype = "SYMBOL", ont = o)
   }
-  ontologies[["s"]] <- ont
-  ont <- list()
-  for(o in ontTypes) {
-    ont[[o]] <- godata('org.Hs.eg.db', keytype = "ENTREZID", ont = o)
-  }
-  ontologies[["e"]] <- ont
   return(ontologies)
 }
 
@@ -37,56 +26,53 @@ ontologies <- getOntologies(ontTypes)
 
 #######################
 
-getGoDf <- function(subject, measure, ontology) {
-  df.go <- subject
-  for(o in names(ontology)) {
-    df.go[, o] <- NA
-    for(r in 1:nrow(df.go)) {
-      df.go[r, o] <- geneSim(df.go[r,1], df.go[r,2], 
-                             semData = ontology[[o]],
+getDfGo <- function(subject, measure, ontologies) {
+  dfGo <- subject
+  for(o in names(ontologies)) {
+    dfGo[, o] <- NA
+    for(r in 1:nrow(dfGo)) {
+      dfGo[r, o] <- geneSim(dfGo[r,1], dfGo[r,2], 
+                             semData = ontologies[[o]],
                              measure = measure, combine = "BMA")[[1]]
     }
   }
-  return(df.go)
+  return(dfGo)
 }
 
-getGoSim <- function(ms_deglinks, measures, ontologies) {
+getGoSim <- function(msDegLinks, measures, ontologies) {
   gosim <- list()
-  for(i in names(ms_deglinks)) {
-    for(t in names(ms_deglinks[[i]])) {
-      for(s in names(ms_deglinks[[i]][[t]])) {
-        for(m in measures) {
-          cat(paste(i, "_", t, "_", s, "_", m, sep=""))
-          start_time <- proc.time()
-          gosim[[i]][[t]][[s]][[m]] <- getGoDf(ms_deglinks[[i]][[t]][[s]], m, ontologies[[i]])
-          elapsed_time <- proc.time() - start_time
-          cat("\t-----", elapsed_time[[3]], "seconds\n")
-        }
+  for(t in names(msDegLinks)) {
+    for(s in names(msDegLinks[[t]])) {
+      for(m in measures) {
+        cat(paste(t, "_", s, "_", m, sep=""))
+        start_time <- proc.time()
+        gosim[[t]][[s]][[m]] <- getDfGo(msDegLinks[[t]][[s]], m, ontologies)
+        elapsed_time <- proc.time() - start_time
+        cat("\t-----", elapsed_time[[3]], "seconds\n")
       }
     }
   }
   return(gosim)
 }
 
-getTestLinks <- function(ms_deglinks) {
+getTestLinks <- function(msDegLinks, size) {
   testLinks <- list()
-  for(i in names(ms_deglinks)) {
-    for(t in names(ms_deglinks[[i]])) {
-      for(s in names(ms_deglinks[[i]][[t]])) {
-        testLinks[[i]][[t]][[s]] <- ms_deglinks[[i]][[t]][[s]][1:10,]
+  for(t in names(msDegLinks)) {
+    for(s in names(msDegLinks[[t]])) {
+      nAll <- nrow(msDegLinks[[t]][[s]])
+      if(size > nAll) {
+        cat("ERROR: Choose a sample size less than", nAll, "!")
+        return(NULL)
+      } else {
+        sampleRows <- sample(1:nAll, size, replace = FALSE)
       }
+      testLinks[[t]][[s]] <- msDegLinks[[t]][[s]][sampleRows,]
     }
   }
   return(testLinks)
 }
 
-testLinks <- getSampleLinks(ms_deglinks)
+testLinks <- getTestLinks(msDegLinks, size = 10)
 
-#gosim <- getGoSim(testLinks, measures, ontologies)
-gosim <- getGoSim(ms_deglinks, measures, ontologies)
-
-
-
-
-
-
+gosim <- getGoSim(testLinks, measures, ontologies)
+#gosim <- getGoSim(ms_deglinks, measures, ontologies)
