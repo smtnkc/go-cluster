@@ -102,7 +102,7 @@ writeGosimByAnnotation <- function(gosim, removeNA, hasColNames) {
       for(m in names(gosim[[t]][[s]])) {
         for(a in c(3:5)) {
           df <- gosim[[t]][[s]][[m]]
-          fname <- paste("RES/GOSIM/", colnames(df)[a], "/", t, "_", s, "_", m, ".csv", sep="")
+          fname <- paste("RES/GOSIM/", colnames(df)[a], "/", t, "_", s, "_", m, ".tsv", sep="")
           print(fname)
           df <- df[, c(1,2,a)]
           if(removeNA) {
