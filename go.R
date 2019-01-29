@@ -107,13 +107,13 @@ writeGosim <- function(gosimObj, ontTypes, removeNA, hasColNames) {
       for(m in names(gosimObj[[t]][[s]])) {
         for(o in ontTypes) {
           df <- gosimObj[[t]][[s]][[m]][, c("symbol1", "symbol2", o)]
-          fname <- paste("RES/GOSIM/", m, "/", t, "_", s, "_", o, ".csv", sep="")
+          fname <- paste("RES/GOSIM/", m, "/", t, "_", s, "_", o, ".tsv", sep="")
           print(fname)
           if(removeNA) {
             df <- na.omit(df)
             row.names(df) <- NULL
           }
-          write.table(df, fname, row.names = FALSE, col.names = hasColNames)
+          write.table(df, fname, row.names = FALSE, col.names = hasColNames, sep="\t")
         }
       }
     }
