@@ -72,7 +72,47 @@ getTestLinks <- function(msDegLinks, size) {
   return(testLinks)
 }
 
-testLinks <- getTestLinks(msDegLinks, size = 10)
+#testLinks <- getTestLinks(msDegLinks, size = 10)
+#gosim <- getGoSim(testLinks, measures, ontologies)
 
-gosim <- getGoSim(testLinks, measures, ontologies)
-#gosim <- getGoSim(ms_deglinks, measures, ontologies)
+gosim <- getGoSim(msDegLinks, measures, ontologies)
+
+writeGosim <- function(gosim, removeNA) {
+  for(t in names(gosim)) {
+    for(s in names(gosim[[t]])) {
+      for(m in names(gosim[[t]][[s]])) {
+        df <- gosim[[t]][[s]][[m]]
+        fname <- paste("RES/GOSIM/ALL/", t, "_", s, "_", m, ".csv", sep="")
+        print(fname)
+        if(removeNA) {
+          df <- na.omit(df)
+          row.names(df) <- NULL
+        }
+        write.csv(df, fname, row.names = FALSE)
+      }
+    }
+  }
+}
+
+writeGosim(gosim, removeNA = FALSE)
+
+writeGosimByAnnotation <- function(gosim, removeNA, hasColNames) {
+  for(t in names(gosim)) {
+    for(s in names(gosim[[t]])) {
+      for(m in names(gosim[[t]][[s]])) {
+        for(a in c(3:5)) {
+          df <- gosim[[t]][[s]][[m]]
+          fname <- paste("RES/GOSIM/", colnames(df)[a], "/", t, "_", s, "_", m, ".csv", sep="")
+          print(fname)
+          df <- df[, c(1,2,a)]
+          if(removeNA) {
+            df <- na.omit(df)
+          }
+          write.table(df, fname, row.names = FALSE, col.names = hasColNames, sep="\t")
+        }
+      }
+    }
+  }
+}
+
+writeGosimByAnnotation(gosim, removeNA = TRUE, hasColNames = FALSE)
