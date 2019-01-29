@@ -26,7 +26,7 @@ ontologies <- getOntologies(ontTypes)
 
 #######################
 
-getDfGo <- function(subject, measure, ontologies) {
+createGoSimHelper <- function(subject, measure, ontologies) {
   dfGo <- subject
   for(o in names(ontologies)) {
     dfGo[, o] <- NA
@@ -39,14 +39,14 @@ getDfGo <- function(subject, measure, ontologies) {
   return(dfGo)
 }
 
-getGoSim <- function(msDegLinks, measures, ontologies) {
+createGoSim <- function(msDegLinks, measures, ontologies) {
   gosim <- list()
   cat("topology,subject,measure,seconds\n")
   for(t in names(msDegLinks)) {
     for(s in names(msDegLinks[[t]])) {
       for(m in measures) {
         start_time <- proc.time()
-        gosim[[t]][[s]][[m]] <- getDfGo(msDegLinks[[t]][[s]], m, ontologies)
+        gosim[[t]][[s]][[m]] <- createGoSimHelper(msDegLinks[[t]][[s]], m, ontologies)
         elapsed_time <- proc.time() - start_time
         cat(paste(t, ",", s, ",", m, ",", round(elapsed_time[[3]],3), sep=""), "\n")
       }
@@ -54,28 +54,6 @@ getGoSim <- function(msDegLinks, measures, ontologies) {
   }
   return(gosim)
 }
-
-getTestLinks <- function(msDegLinks, size) {
-  testLinks <- list()
-  for(t in names(msDegLinks)) {
-    for(s in names(msDegLinks[[t]])) {
-      nAll <- nrow(msDegLinks[[t]][[s]])
-      if(size > nAll) {
-        cat("ERROR: Choose a sample size less than", nAll, "!")
-        return(NULL)
-      } else {
-        sampleRows <- sample(1:nAll, size, replace = FALSE)
-      }
-      testLinks[[t]][[s]] <- msDegLinks[[t]][[s]][sampleRows,]
-    }
-  }
-  return(testLinks)
-}
-
-#testLinks <- getTestLinks(msDegLinks, size = 10)
-#gosim <- getGoSim(testLinks, measures, ontologies)
-
-gosim <- getGoSim(msDegLinks, measures, ontologies)
 
 addCombinedSimilarityScores <- function(gosim) {
   # Takes mean for information content-based methods (resnik, lin, rel, jiang)
@@ -99,20 +77,20 @@ addCombinedSimilarityScores <- function(gosim) {
   return(gosimComb)
 }
 
-gosimWithComb <- addCombinedSimilarityScores(gosim)
-
 writeGosim <- function(gosimObj, ontTypes, removeNA, hasColNames) {
   for(t in names(gosimObj)) {
     for(s in names(gosimObj[[t]])) {
       for(m in names(gosimObj[[t]][[s]])) {
         for(o in ontTypes) {
           df <- gosimObj[[t]][[s]][[m]][, c("symbol1", "symbol2", o)]
-          fname <- paste("RES/GOSIM/", m, "/", t, "_", s, "_", o, ".tsv", sep="")
-          print(fname)
           if(removeNA) {
             df <- na.omit(df)
             row.names(df) <- NULL
           }
+          fdir <- paste("RES/GOSIM/", m, "/", sep = "")
+          fname <- paste(fdir, t, "_", s, "_", o, ".tsv", sep="")
+          print(fname)
+          if(!file.exists(fdir)) dir.create(fdir) # create directory
           write.table(df, fname, row.names = FALSE, col.names = hasColNames, sep="\t")
         }
       }
@@ -120,4 +98,48 @@ writeGosim <- function(gosimObj, ontTypes, removeNA, hasColNames) {
   }
 }
 
-writeGosim(gosimWithComb, ontTypes, removeNA = FALSE, hasColNames = TRUE)
+readGosim <- function(topologies, subjects, measures, ontTypes, includeComb) {
+  gosim <- list()
+  if(includeComb) measures <- c(measures, "Comb")
+
+  for(t in topologies) {
+    for(s in subjects) {
+      for(m in measures) {
+        for(o in ontTypes) {
+          fname <- paste("RES/GOSIM/", m , "/", t, "_", s, "_", o, ".tsv", sep="")
+          if(o == "MF") {
+            gosim[[t]][[s]][[m]] <- as.data.frame(fread(fname, header = TRUE, sep = '\t'))
+          } else {
+            gosim[[t]][[s]][[m]][,o] <- as.data.frame(fread(fname, header = TRUE, sep = '\t'))[,3]
+          }
+        }
+      }
+    }
+  }
+  return(gosim)
+}
+
+generateTestLinks <- function(msDegLinks, size) {
+  testLinks <- list()
+  for(t in names(msDegLinks)) {
+    for(s in names(msDegLinks[[t]])) {
+      nAll <- nrow(msDegLinks[[t]][[s]])
+      if(size > nAll) {
+        cat("ERROR: Choose a sample size less than", nAll, "!")
+        return(NULL)
+      } else {
+        sampleRows <- sample(1:nAll, size, replace = FALSE)
+      }
+      testLinks[[t]][[s]] <- msDegLinks[[t]][[s]][sampleRows,]
+    }
+  }
+  return(testLinks)
+}
+
+# testLinks <- generateTestLinks(msDegLinks, size = 10)
+# gosim <- createGoSim(testLinks, measures, ontologies)
+# gosim <- createGoSim(msDegLinks, measures, ontologies)
+# gosimWithComb <- addCombinedSimilarityScores(gosim)
+# writeGosim(gosimWithComb, ontTypes, removeNA = FALSE, hasColNames = TRUE)
+
+gosimWithComb <- readGosim(topologies, subjects, measures, ontTypes, includeComb = TRUE)
