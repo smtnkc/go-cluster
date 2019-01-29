@@ -77,42 +77,47 @@ getTestLinks <- function(msDegLinks, size) {
 
 gosim <- getGoSim(msDegLinks, measures, ontologies)
 
-writeGosim <- function(gosim, removeNA) {
-  for(t in names(gosim)) {
-    for(s in names(gosim[[t]])) {
-      for(m in names(gosim[[t]][[s]])) {
-        df <- gosim[[t]][[s]][[m]]
-        fname <- paste("RES/GOSIM/ALL/", t, "_", s, "_", m, ".csv", sep="")
-        print(fname)
-        if(removeNA) {
-          df <- na.omit(df)
-          row.names(df) <- NULL
+addCombinedSimilarityScores <- function(gosim) {
+  # Takes mean for information content-based methods (resnik, lin, rel, jiang)
+  gosimComb <- gosim
+  for(t in names(gosimComb)) {
+    for(s in names(gosimComb[[t]])) {
+      subj <- gosim[[t]][[s]]
+      gosimComb[[t]][[s]][["Comb"]] <- subj[[1]] # just take a copy
+      gosimComb[[t]][[s]][["Comb"]][, c(3:5)] <- NA # delete copied scores
+
+      for(o in ontTypes) {
+        total <- 0
+        for(m in names(subj)[!names(subj) == "Wang"]) {
+          df <- gosim[[t]][[s]][[m]]
+          total <- total + df[, o]
         }
-        write.csv(df, fname, row.names = FALSE)
+        gosimComb[[t]][[s]][["Comb"]][, o] <- total / 4
       }
     }
   }
+  return(gosimComb)
 }
 
-writeGosim(gosim, removeNA = FALSE)
+gosimWithComb <- addCombinedSimilarityScores(gosim)
 
-writeGosimByAnnotation <- function(gosim, removeNA, hasColNames) {
-  for(t in names(gosim)) {
-    for(s in names(gosim[[t]])) {
-      for(m in names(gosim[[t]][[s]])) {
-        for(a in c(3:5)) {
-          df <- gosim[[t]][[s]][[m]]
-          fname <- paste("RES/GOSIM/", colnames(df)[a], "/", t, "_", s, "_", m, ".tsv", sep="")
+writeGosim <- function(gosimObj, ontTypes, removeNA, hasColNames) {
+  for(t in names(gosimObj)) {
+    for(s in names(gosimObj[[t]])) {
+      for(m in names(gosimObj[[t]][[s]])) {
+        for(o in ontTypes) {
+          df <- gosimObj[[t]][[s]][[m]][, c("symbol1", "symbol2", o)]
+          fname <- paste("RES/GOSIM/", m, "/", t, "_", s, "_", o, ".csv", sep="")
           print(fname)
-          df <- df[, c(1,2,a)]
           if(removeNA) {
             df <- na.omit(df)
+            row.names(df) <- NULL
           }
-          write.table(df, fname, row.names = FALSE, col.names = hasColNames, sep="\t")
+          write.table(df, fname, row.names = FALSE, col.names = hasColNames)
         }
       }
     }
   }
 }
 
-writeGosimByAnnotation(gosim, removeNA = TRUE, hasColNames = FALSE)
+writeGosim(gosimWithComb, ontTypes, removeNA = FALSE, hasColNames = TRUE)
