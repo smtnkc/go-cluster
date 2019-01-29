@@ -41,14 +41,14 @@ getDfGo <- function(subject, measure, ontologies) {
 
 getGoSim <- function(msDegLinks, measures, ontologies) {
   gosim <- list()
+  cat("topology,subject,measure,seconds\n")
   for(t in names(msDegLinks)) {
     for(s in names(msDegLinks[[t]])) {
       for(m in measures) {
-        cat(paste(t, "_", s, "_", m, sep=""))
         start_time <- proc.time()
         gosim[[t]][[s]][[m]] <- getDfGo(msDegLinks[[t]][[s]], m, ontologies)
         elapsed_time <- proc.time() - start_time
-        cat("\t-----", elapsed_time[[3]], "seconds\n")
+        cat(paste(t, ",", s, ",", m, ",", round(elapsed_time[[3]],3), sep=""), "\n")
       }
     }
   }
