@@ -5,7 +5,7 @@ readGosim <- function() {
   for(t in topologies) {
     for(s in subjects) {
       for(m in measures) {
-        fname <- paste("RES/GOSIM/", t, "_", s, "_", m, ".csv", sep="")
+        fname <- paste("RES/GOSIM/ALL/", t, "_", s, "_", m, ".csv", sep="")
         gosim[[t]][[s]][[m]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
       }
     }
