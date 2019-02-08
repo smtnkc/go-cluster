@@ -86,6 +86,7 @@ writeGosim <- function(gosimObj, ontTypes, clean) {
           if(clean) {
             df <- na.omit(df)
             row.names(df) <- NULL
+            df[df == 0] <- 0.00000001 # Since zero-weights are invalid for SPICi
             hasColNames <- FALSE
             fdir <- paste("RES/GOSIM/CLEANED/", m, "/", sep = "")
           } else {
@@ -144,6 +145,6 @@ generateTestLinks <- function(msDegLinks, size) {
 # gosim <- createGoSim(testLinks, measures, ontologies)
 # gosim <- createGoSim(msDegLinks, measures, ontologies)
 # gosimWithComb <- addCombinedSimilarityScores(gosim)
-# writeGosim(gosimWithComb, ontTypes, clean = FALSE) # if clean, remove NAs and colnames
+# writeGosim(gosimWithComb, ontTypes, clean = TRUE) # if clean, remove NAs and colnames
 
 gosimWithComb <- readGosim(topologies, subjects, measures, ontTypes, includeComb = TRUE)
