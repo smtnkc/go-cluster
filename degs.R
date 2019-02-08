@@ -95,46 +95,40 @@ writeDEGs <- function(degs, FC, P_VAL) {
 
 writeDEGs(degs, FC, P_VAL)
 
-
-
-
-
-
-
-
-
-
 ######################## TREAT OR MODERATED-T METHOD:
-# design.mets <- cbind(Intercept=1,Group=c(rep(0,9),rep(1,(length(df.mets)-9))))
-# design.cad  <- cbind(Intercept=1,Group=c(rep(0,9),rep(1,(length(df.cad)-9))))
-# design.t2d  <- cbind(Intercept=1,Group=c(rep(0,9),rep(1,(length(df.t2d)-9))))
+# library(limma)
+#
+# designs <- list()
+# designs[["mets"]] <- cbind(Intercept=1,Group=c(rep(0,9),rep(1,(length(subsets[["mets"]])-9))))
+# designs[["t2d"]]  <- cbind(Intercept=1,Group=c(rep(0,9),rep(1,(length(subsets[["t2d"]])-9))))
+# designs[["cad"]]  <- cbind(Intercept=1,Group=c(rep(0,9),rep(1,(length(subsets[["cad"]])-9))))
 # 
-# fit.mets <- lmFit(df.mets, design.mets)
-# fit.cad  <- lmFit(df.cad, design.cad)
-# fit.t2d  <- lmFit(df.t2d, design.t2d)
+# fit.mets <- lmFit(subsets[["mets"]], designs[["mets"]])
+# fit.t2d  <- lmFit(subsets[["t2d"]], designs[["t2d"]])
+# fit.cad  <- lmFit(subsets[["cad"]], designs[["cad"]])
 
 ######################## TREAT METHOD:
 # tfit.mets <- treat(fit.mets)
 # tt.mets <- topTreat(tfit.mets, coef=2, number = nrow(df.mets))
-# deg.mets <- tt.mets[which(abs(tt.mets$logFC) >= 1 & tt.mets$adj.P.Val <= 0.05),]
-# 
+# deg.mets <- tt.mets[which(abs(tt.mets$logFC) >= FC & tt.mets$adj.P.Val <= P_VAL),]
+#
 # tfit.cad <- treat(fit.cad)
 # tt.cad <- topTreat(tfit.cad, coef=2, number = nrow(df.cad))
-# deg.cad <- tt.cad[which(abs(tt.cad$logFC) >= 1 & tt.cad$adj.P.Val <= 0.05),]
-# 
+# deg.cad <- tt.cad[which(abs(tt.cad$logFC) >= FC & tt.cad$adj.P.Val <= P_VAL),]
+#
 # tfit.t2d <- treat(fit.t2d)
 # tt.t2d <- topTreat(tfit.t2d, coef=2, number = nrow(df.t2d))
-# deg.t2d <- tt.t2d[which(abs(tt.t2d$logFC) >= 1 & tt.t2d$adj.P.Val <= 0.05),]
+# deg.t2d <- tt.t2d[which(abs(tt.t2d$logFC) >= FC & tt.t2d$adj.P.Val <= P_VAL),]
 
 ######################## MODERATED-T METHOD:
 # bfit.mets <- eBayes(fit.mets)
-# tb.mets <- topTable(bfit.mets, coef=2, number = nrow(df.mets))
-# deg.mets <- tb.mets[which(abs(tb.mets$logFC) >= 1 & tb.mets$adj.P.Val <= 0.05),]
-# 
-# bfit.cad <- eBayes(fit.cad)
-# tb.cad <- topTable(bfit.cad, coef=2, number = nrow(df.cad))
-# deg.cad <- tb.cad[which(abs(tb.cad$logFC) >= 1 & tb.cad$adj.P.Val <= 0.05),]
-# 
+# tb.mets <- topTable(bfit.mets, coef=2, number = nrow(subsets[["mets"]]))
+# deg.mets <- tb.mets[which(abs(tb.mets$logFC) >= FC & tb.mets$adj.P.Val <= P_VAL),]
+#
 # bfit.t2d <- eBayes(fit.t2d)
-# tb.t2d <- topTable(bfit.t2d, coef=2, number = nrow(df.t2d))
-# deg.t2d <- tb.t2d[which(abs(tb.t2d$logFC) >= 1 & tb.t2d$adj.P.Val <= 0.05),]
+# tb.t2d <- topTable(bfit.t2d, coef=2, number = nrow(subsets[["cad"]]))
+# deg.t2d <- tb.t2d[which(abs(tb.t2d$logFC) >= FC & tb.t2d$adj.P.Val <= P_VAL),]
+#
+# bfit.cad <- eBayes(fit.cad)
+# tb.cad <- topTable(bfit.cad, coef=2, number = nrow(subsets[["t2d"]]))
+# deg.cad <- tb.cad[which(abs(tb.cad$logFC) >= FC & tb.cad$adj.P.Val <= P_VAL),]

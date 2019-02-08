@@ -77,17 +77,21 @@ addCombinedSimilarityScores <- function(gosim) {
   return(gosimComb)
 }
 
-writeGosim <- function(gosimObj, ontTypes, removeNA, hasColNames) {
+writeGosim <- function(gosimObj, ontTypes, clean) {
   for(t in names(gosimObj)) {
     for(s in names(gosimObj[[t]])) {
       for(m in names(gosimObj[[t]][[s]])) {
         for(o in ontTypes) {
           df <- gosimObj[[t]][[s]][[m]][, c("symbol1", "symbol2", o)]
-          if(removeNA) {
+          if(clean) {
             df <- na.omit(df)
             row.names(df) <- NULL
+            hasColNames <- FALSE
+            fdir <- paste("RES/GOSIM/CLEANED/", m, "/", sep = "")
+          } else {
+            hasColNames <- TRUE
+            fdir <- paste("RES/GOSIM/", m, "/", sep = "")
           }
-          fdir <- paste("RES/GOSIM/", m, "/", sep = "")
           fname <- paste(fdir, t, "_", s, "_", o, ".tsv", sep="")
           print(fname)
           if(!file.exists(fdir)) dir.create(fdir) # create directory
@@ -140,6 +144,6 @@ generateTestLinks <- function(msDegLinks, size) {
 # gosim <- createGoSim(testLinks, measures, ontologies)
 # gosim <- createGoSim(msDegLinks, measures, ontologies)
 # gosimWithComb <- addCombinedSimilarityScores(gosim)
-# writeGosim(gosimWithComb, ontTypes, removeNA = FALSE, hasColNames = TRUE)
+# writeGosim(gosimWithComb, ontTypes, clean = FALSE) # if clean, remove NAs and colnames
 
 gosimWithComb <- readGosim(topologies, subjects, measures, ontTypes, includeComb = TRUE)
