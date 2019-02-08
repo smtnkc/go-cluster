@@ -1,412 +1,412 @@
-inet_cad_BP.tsv
+./Comb/inet_cad_BP.tsv
 average cluster size: 4.09804
 There are 51 clusters.
 
-inet_cad_CC.tsv
+./Comb/inet_cad_CC.tsv
 average cluster size: 4.06154
 There are 65 clusters.
 
-inet_cad_MF.tsv
+./Comb/inet_cad_MF.tsv
 average cluster size: 3.75862
 There are 58 clusters.
 
-inet_mets_BP.tsv
+./Comb/inet_mets_BP.tsv
 average cluster size: 2
 There are 1 clusters.
 
-inet_mets_CC.tsv
+./Comb/inet_mets_CC.tsv
 average cluster size: 3
 There are 1 clusters.
 
-inet_mets_MF.tsv
+./Comb/inet_mets_MF.tsv
 average cluster size: 3
 There are 1 clusters.
 
-inet_t2d_BP.tsv
+./Comb/inet_t2d_BP.tsv
 average cluster size: 2.66667
 There are 3 clusters.
 
-inet_t2d_CC.tsv
+./Comb/inet_t2d_CC.tsv
 average cluster size: 2.6
 There are 5 clusters.
 
-inet_t2d_MF.tsv
+./Comb/inet_t2d_MF.tsv
 average cluster size: 2
 There are 1 clusters.
 
-string_cad_BP.tsv
+./Comb/string_cad_BP.tsv
 average cluster size: 3.95161
 There are 62 clusters.
 
-string_cad_CC.tsv
+./Comb/string_cad_CC.tsv
 average cluster size: 4.27632
 There are 76 clusters.
 
-string_cad_MF.tsv
+./Comb/string_cad_MF.tsv
 average cluster size: 3.73333
 There are 75 clusters.
 
-string_mets_BP.tsv
+./Comb/string_mets_BP.tsv
 There are 0 clusters.
 
-string_mets_CC.tsv
+./Comb/string_mets_CC.tsv
 There are 0 clusters.
 
-string_mets_MF.tsv
+./Comb/string_mets_MF.tsv
 average cluster size: 2
 There are 1 clusters.
 
-string_t2d_BP.tsv
+./Comb/string_t2d_BP.tsv
 average cluster size: 2.33333
 There are 6 clusters.
 
-string_t2d_CC.tsv
+./Comb/string_t2d_CC.tsv
 average cluster size: 2.125
 There are 8 clusters.
 
-string_t2d_MF.tsv
+./Comb/string_t2d_MF.tsv
 average cluster size: 2.6
 There are 5 clusters.
 
-inet_cad_BP.tsv
+./Rel/inet_cad_BP.tsv
 average cluster size: 4.36538
 There are 52 clusters.
 
-inet_cad_CC.tsv
+./Rel/inet_cad_CC.tsv
 average cluster size: 4.09231
 There are 65 clusters.
 
-inet_cad_MF.tsv
+./Rel/inet_cad_MF.tsv
 average cluster size: 3.89091
 There are 55 clusters.
 
-inet_mets_BP.tsv
+./Rel/inet_mets_BP.tsv
 average cluster size: 2
 There are 1 clusters.
 
-inet_mets_CC.tsv
+./Rel/inet_mets_CC.tsv
 average cluster size: 3
 There are 1 clusters.
 
-inet_mets_MF.tsv
+./Rel/inet_mets_MF.tsv
 average cluster size: 2
 There are 1 clusters.
 
-inet_t2d_BP.tsv
+./Rel/inet_t2d_BP.tsv
 average cluster size: 3
 There are 3 clusters.
 
-inet_t2d_CC.tsv
+./Rel/inet_t2d_CC.tsv
 average cluster size: 2.4
 There are 5 clusters.
 
-inet_t2d_MF.tsv
+./Rel/inet_t2d_MF.tsv
 There are 0 clusters.
 
-string_cad_BP.tsv
+./Rel/string_cad_BP.tsv
 average cluster size: 4.05714
 There are 70 clusters.
 
-string_cad_CC.tsv
+./Rel/string_cad_CC.tsv
 average cluster size: 4.225
 There are 80 clusters.
 
-string_cad_MF.tsv
+./Rel/string_cad_MF.tsv
 average cluster size: 3.5641
 There are 78 clusters.
 
-string_mets_BP.tsv
+./Rel/string_mets_BP.tsv
 There are 0 clusters.
 
-string_mets_CC.tsv
+./Rel/string_mets_CC.tsv
 average cluster size: 2
 There are 1 clusters.
 
-string_mets_MF.tsv
+./Rel/string_mets_MF.tsv
 average cluster size: 3
 There are 1 clusters.
 
-string_t2d_BP.tsv
+./Rel/string_t2d_BP.tsv
 average cluster size: 2.375
 There are 8 clusters.
 
-string_t2d_CC.tsv
+./Rel/string_t2d_CC.tsv
 average cluster size: 2.28571
 There are 7 clusters.
 
-string_t2d_MF.tsv
+./Rel/string_t2d_MF.tsv
 average cluster size: 2.4
 There are 5 clusters.
 
-inet_cad_BP.tsv
+./Jiang/inet_cad_BP.tsv
 average cluster size: 3.98333
 There are 60 clusters.
 
-inet_cad_CC.tsv
+./Jiang/inet_cad_CC.tsv
 average cluster size: 4.4359
 There are 78 clusters.
 
-inet_cad_MF.tsv
+./Jiang/inet_cad_MF.tsv
 average cluster size: 4.37681
 There are 69 clusters.
 
-inet_mets_BP.tsv
+./Jiang/inet_mets_BP.tsv
 average cluster size: 2
 There are 2 clusters.
 
-inet_mets_CC.tsv
+./Jiang/inet_mets_CC.tsv
 average cluster size: 4
 There are 1 clusters.
 
-inet_mets_MF.tsv
+./Jiang/inet_mets_MF.tsv
 average cluster size: 3
 There are 1 clusters.
 
-inet_t2d_BP.tsv
+./Jiang/inet_t2d_BP.tsv
 average cluster size: 2.75
 There are 4 clusters.
 
-inet_t2d_CC.tsv
+./Jiang/inet_t2d_CC.tsv
 average cluster size: 2.4
 There are 10 clusters.
 
-inet_t2d_MF.tsv
+./Jiang/inet_t2d_MF.tsv
 average cluster size: 2.4
 There are 5 clusters.
 
-string_cad_BP.tsv
+./Jiang/string_cad_BP.tsv
 average cluster size: 4.21127
 There are 71 clusters.
 
-string_cad_CC.tsv
+./Jiang/string_cad_CC.tsv
 average cluster size: 4.55914
 There are 93 clusters.
 
-string_cad_MF.tsv
+./Jiang/string_cad_MF.tsv
 average cluster size: 4.59494
 There are 79 clusters.
 
-string_mets_BP.tsv
+./Jiang/string_mets_BP.tsv
 There are 0 clusters.
 
-string_mets_CC.tsv
+./Jiang/string_mets_CC.tsv
 average cluster size: 2
 There are 3 clusters.
 
-string_mets_MF.tsv
+./Jiang/string_mets_MF.tsv
 average cluster size: 2.66667
 There are 3 clusters.
 
-string_t2d_BP.tsv
+./Jiang/string_t2d_BP.tsv
 average cluster size: 2.5
 There are 10 clusters.
 
-string_t2d_CC.tsv
+./Jiang/string_t2d_CC.tsv
 average cluster size: 2.66667
 There are 15 clusters.
 
-string_t2d_MF.tsv
+./Jiang/string_t2d_MF.tsv
 average cluster size: 2.42857
 There are 14 clusters.
 
-inet_cad_BP.tsv
+./Wang/inet_cad_BP.tsv
 average cluster size: 3.92727
 There are 55 clusters.
 
-inet_cad_CC.tsv
+./Wang/inet_cad_CC.tsv
 average cluster size: 4.53623
 There are 69 clusters.
 
-inet_cad_MF.tsv
+./Wang/inet_cad_MF.tsv
 average cluster size: 4.35294
 There are 68 clusters.
 
-inet_mets_BP.tsv
+./Wang/inet_mets_BP.tsv
 average cluster size: 2
 There are 2 clusters.
 
-inet_mets_CC.tsv
+./Wang/inet_mets_CC.tsv
 average cluster size: 4
 There are 1 clusters.
 
-inet_mets_MF.tsv
+./Wang/inet_mets_MF.tsv
 average cluster size: 3
 There are 1 clusters.
 
-inet_t2d_BP.tsv
+./Wang/inet_t2d_BP.tsv
 average cluster size: 3
 There are 3 clusters.
 
-inet_t2d_CC.tsv
+./Wang/inet_t2d_CC.tsv
 average cluster size: 2.44444
 There are 9 clusters.
 
-inet_t2d_MF.tsv
+./Wang/inet_t2d_MF.tsv
 average cluster size: 2.2
 There are 5 clusters.
 
-string_cad_BP.tsv
+./Wang/string_cad_BP.tsv
 average cluster size: 4.18462
 There are 65 clusters.
 
-string_cad_CC.tsv
+./Wang/string_cad_CC.tsv
 average cluster size: 4.31522
 There are 92 clusters.
 
-string_cad_MF.tsv
+./Wang/string_cad_MF.tsv
 average cluster size: 4.21429
 There are 84 clusters.
 
-string_mets_BP.tsv
+./Wang/string_mets_BP.tsv
 There are 0 clusters.
 
-string_mets_CC.tsv
+./Wang/string_mets_CC.tsv
 average cluster size: 2
 There are 1 clusters.
 
-string_mets_MF.tsv
+./Wang/string_mets_MF.tsv
 average cluster size: 3
 There are 2 clusters.
 
-string_t2d_BP.tsv
+./Wang/string_t2d_BP.tsv
 average cluster size: 2.66667
 There are 6 clusters.
 
-string_t2d_CC.tsv
+./Wang/string_t2d_CC.tsv
 average cluster size: 2.69231
 There are 13 clusters.
 
-string_t2d_MF.tsv
+./Wang/string_t2d_MF.tsv
 average cluster size: 2.46667
 There are 15 clusters.
 
-inet_cad_BP.tsv
+./Lin/inet_cad_BP.tsv
 average cluster size: 4.14754
 There are 61 clusters.
 
-inet_cad_CC.tsv
+./Lin/inet_cad_CC.tsv
 average cluster size: 4.68254
 There are 63 clusters.
 
-inet_cad_MF.tsv
+./Lin/inet_cad_MF.tsv
 average cluster size: 4.0625
 There are 64 clusters.
 
-inet_mets_BP.tsv
+./Lin/inet_mets_BP.tsv
 average cluster size: 2
 There are 1 clusters.
 
-inet_mets_CC.tsv
+./Lin/inet_mets_CC.tsv
 average cluster size: 3
 There are 1 clusters.
 
-inet_mets_MF.tsv
+./Lin/inet_mets_MF.tsv
 average cluster size: 3
 There are 1 clusters.
 
-inet_t2d_BP.tsv
+./Lin/inet_t2d_BP.tsv
 average cluster size: 3
 There are 3 clusters.
 
-inet_t2d_CC.tsv
+./Lin/inet_t2d_CC.tsv
 average cluster size: 2.375
 There are 8 clusters.
 
-inet_t2d_MF.tsv
+./Lin/inet_t2d_MF.tsv
 average cluster size: 2.5
 There are 2 clusters.
 
-string_cad_BP.tsv
+./Lin/string_cad_BP.tsv
 average cluster size: 4.33824
 There are 68 clusters.
 
-string_cad_CC.tsv
+./Lin/string_cad_CC.tsv
 average cluster size: 4.12766
 There are 94 clusters.
 
-string_cad_MF.tsv
+./Lin/string_cad_MF.tsv
 average cluster size: 4.18182
 There are 77 clusters.
 
-string_mets_BP.tsv
+./Lin/string_mets_BP.tsv
 There are 0 clusters.
 
-string_mets_CC.tsv
+./Lin/string_mets_CC.tsv
 average cluster size: 2
 There are 1 clusters.
 
-string_mets_MF.tsv
+./Lin/string_mets_MF.tsv
 average cluster size: 3
 There are 2 clusters.
 
-string_t2d_BP.tsv
+./Lin/string_t2d_BP.tsv
 average cluster size: 2.5
 There are 8 clusters.
 
-string_t2d_CC.tsv
+./Lin/string_t2d_CC.tsv
 average cluster size: 2.5
 There are 8 clusters.
 
-string_t2d_MF.tsv
+./Lin/string_t2d_MF.tsv
 average cluster size: 2.36364
 There are 11 clusters.
 
-inet_cad_BP.tsv
+./Resnik/inet_cad_BP.tsv
 average cluster size: 3.6
 There are 20 clusters.
 
-inet_cad_CC.tsv
+./Resnik/inet_cad_CC.tsv
 average cluster size: 2.66667
 There are 3 clusters.
 
-inet_cad_MF.tsv
+./Resnik/inet_cad_MF.tsv
 average cluster size: 3.16667
 There are 6 clusters.
 
-inet_mets_BP.tsv
+./Resnik/inet_mets_BP.tsv
 There are 0 clusters.
 
-inet_mets_CC.tsv
+./Resnik/inet_mets_CC.tsv
 There are 0 clusters.
 
-inet_mets_MF.tsv
+./Resnik/inet_mets_MF.tsv
 There are 0 clusters.
 
-inet_t2d_BP.tsv
+./Resnik/inet_t2d_BP.tsv
 There are 0 clusters.
 
-inet_t2d_CC.tsv
+./Resnik/inet_t2d_CC.tsv
 There are 0 clusters.
 
-inet_t2d_MF.tsv
+./Resnik/inet_t2d_MF.tsv
 There are 0 clusters.
 
-string_cad_BP.tsv
+./Resnik/string_cad_BP.tsv
 average cluster size: 3.56522
 There are 23 clusters.
 
-string_cad_CC.tsv
+./Resnik/string_cad_CC.tsv
 average cluster size: 3.2
 There are 5 clusters.
 
-string_cad_MF.tsv
+./Resnik/string_cad_MF.tsv
 average cluster size: 2.66667
 There are 12 clusters.
 
-string_mets_BP.tsv
+./Resnik/string_mets_BP.tsv
 There are 0 clusters.
 
-string_mets_CC.tsv
+./Resnik/string_mets_CC.tsv
 There are 0 clusters.
 
-string_mets_MF.tsv
+./Resnik/string_mets_MF.tsv
 There are 0 clusters.
 
-string_t2d_BP.tsv
+./Resnik/string_t2d_BP.tsv
 There are 0 clusters.
 
-string_t2d_CC.tsv
+./Resnik/string_t2d_CC.tsv
 There are 0 clusters.
 
-string_t2d_MF.tsv
+./Resnik/string_t2d_MF.tsv
 There are 0 clusters.

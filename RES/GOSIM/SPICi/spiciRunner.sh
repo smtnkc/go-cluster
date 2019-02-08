@@ -7,7 +7,7 @@ do
 	
 	for f in $D/*.tsv
 	do
-		echo "$(basename $f)"
+		echo "$f"
 		spici -i $f -o "$D/CLUSTERS/$(basename $f)"
 		echo ""
 	done
