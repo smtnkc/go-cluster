@@ -77,18 +77,18 @@ addCombinedSimilarityScores <- function(gosim) {
   return(gosimComb)
 }
 
-writeGosim <- function(gosimObj, ontTypes, clean) {
+writeGosim <- function(gosimObj, ontTypes, spici) {
   for(t in names(gosimObj)) {
     for(s in names(gosimObj[[t]])) {
       for(m in names(gosimObj[[t]][[s]])) {
         for(o in ontTypes) {
           df <- gosimObj[[t]][[s]][[m]][, c("symbol1", "symbol2", o)]
-          if(clean) {
-            df <- na.omit(df)
+          if(spici) {
+            df <- na.omit(df) # Since NAs are invalid for SPICi
             row.names(df) <- NULL
             df[df == 0] <- 0.00000001 # Since zero-weights are invalid for SPICi
-            hasColNames <- FALSE
-            fdir <- paste("RES/GOSIM/CLEANED/", m, "/", sep = "")
+            hasColNames <- FALSE # Since headers are invalid for SPICi
+            fdir <- paste("RES/GOSIM/SPICi/", m, "/", sep = "")
           } else {
             hasColNames <- TRUE
             fdir <- paste("RES/GOSIM/", m, "/", sep = "")
@@ -145,6 +145,6 @@ generateTestLinks <- function(msDegLinks, size) {
 # gosim <- createGoSim(testLinks, measures, ontologies)
 # gosim <- createGoSim(msDegLinks, measures, ontologies)
 # gosimWithComb <- addCombinedSimilarityScores(gosim)
-# writeGosim(gosimWithComb, ontTypes, clean = TRUE) # if clean, remove NAs and colnames
+# writeGosim(gosimWithComb, ontTypes, spici = FALSE) # When exporting for SPIci, remove NAs, zero-weighths, and colnames
 
 gosimWithComb <- readGosim(topologies, subjects, measures, ontTypes, includeComb = TRUE)
