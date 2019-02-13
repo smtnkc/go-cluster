@@ -102,8 +102,10 @@ gosimClustersAll <- addNonClusteredNodes(gosimNodes, gosimClusters)
 drawClusters <- function(gosimObj, gosimClustersAll, addNonClusteredNodes) {
   for(t in names(gosimObj)) {
     for(s in names(gosimObj[[t]])) {
-      for(m in c("Wang")) { #for(m in names(gosimObj[[t]][[s]])) {
-        for(o in c("BP")) { #for(o in names(gosimObj[[t]][[s]][[m]])) {
+      #for(m in c("Wang")) {
+      for(m in names(gosimObj[[t]][[s]])) {
+        #for(o in c("BP")) {
+        for(o in names(gosimObj[[t]][[s]][[m]])) {
           edges <- gosimObj[[t]][[s]][[m]][[o]]
           if(addNonClusteredNodes && s != "cad") {
             nodes <- gosimClustersAll[[t]][[s]][[m]][[o]]
