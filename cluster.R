@@ -124,7 +124,7 @@ drawClusters <- function(gosimObj, gosimClustersAll, addNonClusteredNodes) {
             
             fname <- paste("PLOTS/CLUSTERS/", t, "_", s, "_", m, "_", o, ".png", sep="")
             cat(fname, "...\n")
-            png(filename=fname, width = 960, height = 960)
+            png(filename=fname, width = 2280, height = 2280)
             lay <- layout_in_circle(net)
             
             info1 <- paste("Topology: ", toupper(t),
@@ -137,13 +137,16 @@ drawClusters <- function(gosimObj, gosimClustersAll, addNonClusteredNodes) {
               "     Clustered nodes: ", length(V(net)[V(net)$cluster != 0]),
               "     Clusters: ", length(unique(V(net)[V(net)$cluster != 0]$cluster)), sep="")
             
-            plot(net, main=info1, xlab=info2, layout=lay,
+            plot(net, layout=lay,
                  vertex.label=nodes$node, vertex.shape="circle",
                  vertex.size=4, #vertex.size=nchar(as.character(nodes$node))*4+5, vertex.size2=10,
-                 vertex.label.color="black", vertex.label.cex=0.5,
+                 vertex.label.color="black", vertex.label.cex=0.6,
                  vertex.frame.color="gray50", vertex.label.family="Helvetica",
                  edge.width=1, edge.label.color="black",
                  edge.color="gray50", edge.curved=0, edge.label.family="Helvetica")
+            
+            mtext(info1, side=3, line=0, cex=3)
+            mtext(info2, side=1, line=0, cex=3)
             
             dev.off()
           }
