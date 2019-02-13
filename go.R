@@ -24,76 +24,72 @@ getOntologies <- function(ontTypes) {
 
 ontologies <- getOntologies(ontTypes)
 
-#######################
+##############################################
 
-createGoSimHelper <- function(subject, measure, ontologies) {
-  dfGo <- subject
-  for(o in names(ontologies)) {
-    dfGo[, o] <- NA
-    for(r in 1:nrow(dfGo)) {
-      dfGo[r, o] <- geneSim(dfGo[r,1], dfGo[r,2], 
-                             semData = ontologies[[o]],
-                             measure = measure, combine = "BMA")[[1]]
-    }
-  }
-  return(dfGo)
-}
-
-createGoSim <- function(msDegLinks, measures, ontologies) {
+createGoSim <- function(msDegLinks, measures, ontTypes) {
   gosim <- list()
   cat("topology,subject,measure,seconds\n")
   for(t in names(msDegLinks)) {
     for(s in names(msDegLinks[[t]])) {
       for(m in measures) {
-        start_time <- proc.time()
-        gosim[[t]][[s]][[m]] <- createGoSimHelper(msDegLinks[[t]][[s]], m, ontologies)
-        elapsed_time <- proc.time() - start_time
-        cat(paste(t, ",", s, ",", m, ",", round(elapsed_time[[3]],3), sep=""), "\n")
+        for(o in ontTypes) {
+          start_time <- proc.time()
+          dfGo <- msDegLinks[[t]][[s]]
+          dfGo[, o] <- NA
+          for(r in 1:nrow(dfGo)) {
+            dfGo[r, o] <- geneSim(dfGo[r,1], dfGo[r,2], 
+                                  semData = ontologies[[o]],
+                                  measure = m, combine = "BMA")[[1]]
+          }
+          gosim[[t]][[s]][[m]][[o]] <- dfGo
+          elapsed_time <- proc.time() - start_time
+          cat(paste(t, ",", s, ",", m, ",", o, ",", round(elapsed_time[[3]],3), sep=""), "\n") 
+        }
       }
     }
   }
   return(gosim)
 }
 
-addCombinedSimilarityScores <- function(gosim) {
+addCombinedSimilarityScores <- function(gosimObj) {
   # Takes mean for information content-based methods (resnik, lin, rel, jiang)
-  gosimComb <- gosim
+  gosimComb <- gosimObj
   for(t in names(gosimComb)) {
     for(s in names(gosimComb[[t]])) {
-      subj <- gosim[[t]][[s]]
+      subj <- gosimObj[[t]][[s]]
       gosimComb[[t]][[s]][["Comb"]] <- subj[[1]] # just take a copy
-      gosimComb[[t]][[s]][["Comb"]][, c(3:5)] <- NA # delete copied scores
-
-      for(o in ontTypes) {
+      
+      for(o in names(gosimComb[[t]][[s]][["Comb"]])) {
+        gosimComb[[t]][[s]][["Comb"]][[o]][, o] <- NA # delete copied weights 
         total <- 0
-        for(m in names(subj)[!names(subj) == "Wang"]) {
-          df <- gosim[[t]][[s]][[m]]
-          total <- total + df[, o]
+        for(m in names(subj)) {
+          df <- gosimObj[[t]][[s]][[m]]
+          total <- total + df[[o]][, 3]
         }
-        gosimComb[[t]][[s]][["Comb"]][, o] <- total / 4
+        gosimComb[[t]][[s]][["Comb"]][[o]][, 3] <- total / 4
       }
     }
   }
   return(gosimComb)
 }
 
-writeGosim <- function(gosimObj, ontTypes, spici) {
+writeGosim <- function(gosimObj, spici) {
   for(t in names(gosimObj)) {
     for(s in names(gosimObj[[t]])) {
       for(m in names(gosimObj[[t]][[s]])) {
-        for(o in ontTypes) {
-          df <- gosimObj[[t]][[s]][[m]][, c("symbol1", "symbol2", o)]
+        for(o in names(gosimObj[[t]][[s]][[m]])) {
+          df <- gosimObj[[t]][[s]][[m]][[o]]
           if(spici) {
             df <- na.omit(df) # Since NAs are invalid for SPICi
             row.names(df) <- NULL
             df[df == 0] <- 0.00000001 # Since zero-weights are invalid for SPICi
             hasColNames <- FALSE # Since headers are invalid for SPICi
-            fdir <- paste("RES/GOSIM/SPICi/", m, "/", sep = "")
+            fdir <- "RES/SPICi/"
           } else {
             hasColNames <- TRUE
-            fdir <- paste("RES/GOSIM/", m, "/", sep = "")
+            fdir <- "RES/GOSIM/"
           }
-          fname <- paste(fdir, t, "_", s, "_", o, ".tsv", sep="")
+          fname <- paste(fdir, t, "_", s, "_", m, "_", o, ".tsv", sep="")
           print(fname)
           if(!file.exists(fdir)) dir.create(fdir) # create directory
           write.table(df, fname, row.names = FALSE, col.names = hasColNames, sep="\t")
@@ -103,26 +99,7 @@ writeGosim <- function(gosimObj, ontTypes, spici) {
   }
 }
 
-readGosim <- function(topologies, subjects, measures, ontTypes, includeComb) {
-  gosim <- list()
-  if(includeComb) measures <- c(measures, "Comb")
-
-  for(t in topologies) {
-    for(s in subjects) {
-      for(m in measures) {
-        for(o in ontTypes) {
-          fname <- paste("RES/GOSIM/", m , "/", t, "_", s, "_", o, ".tsv", sep="")
-          if(o == "MF") {
-            gosim[[t]][[s]][[m]] <- as.data.frame(fread(fname, header = TRUE, sep = '\t'))
-          } else {
-            gosim[[t]][[s]][[m]][,o] <- as.data.frame(fread(fname, header = TRUE, sep = '\t'))[,3]
-          }
-        }
-      }
-    }
-  }
-  return(gosim)
-}
+##############################################
 
 generateTestLinks <- function(msDegLinks, size) {
   testLinks <- list()
@@ -142,9 +119,13 @@ generateTestLinks <- function(msDegLinks, size) {
 }
 
 # testLinks <- generateTestLinks(msDegLinks, size = 10)
-# gosim <- createGoSim(testLinks, measures, ontologies)
-# gosim <- createGoSim(msDegLinks, measures, ontologies)
+# gosimTest <- createGoSim(testLinks, measures, ontTypes)
+# gosimTestWithComb <- addCombinedSimilarityScores(gosimTest)
+
+##############################################
+
+# gosim <- createGoSim(msDegLinks, measures, ontTypes)
 # gosimWithComb <- addCombinedSimilarityScores(gosim)
-# writeGosim(gosimWithComb, ontTypes, spici = FALSE) # When exporting for SPIci, remove NAs, zero-weighths, and colnames
+# writeGosim(gosimWithComb, spici = TRUE) # When exporting for SPIci, remove NAs, zero-weighths, and colnames
 
 gosimWithComb <- readGosim(topologies, subjects, measures, ontTypes, includeComb = TRUE)

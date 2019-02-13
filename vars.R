@@ -53,3 +53,20 @@ FormatDf <- function(df) {
   df[df == "Dye Marker"] <- ""
   return (df)
 }
+
+readGosim <- function(topologies, subjects, measures, ontTypes, includeComb) {
+  gosim <- list()
+  if(includeComb) measures <- c(measures, "Comb")
+  
+  for(t in topologies) {
+    for(s in subjects) {
+      for(m in measures) {
+        for(o in ontTypes) {
+          fname <- paste("RES/GOSIM/", t , "_", s, "_", m, "_", o, ".tsv", sep="")
+          gosim[[t]][[s]][[m]][[o]] <- as.data.frame(fread(fname, header = TRUE, sep = '\t'))
+        }
+      }
+    }
+  }
+  return(gosim)
+}
