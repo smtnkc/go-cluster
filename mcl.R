@@ -126,8 +126,6 @@ drawClusters <- function(gosimObj, gosimMCL) {
         for(o in names(gosimObj[[t]][[s]][[m]])) {
           nodes <- gosimMCL[[t]][[s]][[m]][[o]]
           edges <- gosimObj[[t]][[s]][[m]][[o]]
-          edges <- edges[edges$symbol1 %in% nodes$node, ]
-          edges <- edges[edges$symbol2 %in% nodes$node, ]
           
           if(nrow(nodes) != 0 && nrow(edges) != 0) {
             net <- graph_from_data_frame(d=edges, vertices=nodes, directed=F)

@@ -89,7 +89,7 @@ addNonClusteredNodes <- function(gosimNodes, gosimSpici) {
           clusteredNodesDf <- gosimSpici[[t]][[s]][[m]][[o]]
           nonClusteredNodesDf <- data.frame(node = setdiff(gosimNodes[[t]][[s]][[m]][[o]],
                                                            gosimSpici[[t]][[s]][[m]][[o]]$node),
-                                            cluster = -1, stringsAsFactors = FALSE)
+                                            cluster = 9999, stringsAsFactors = FALSE)
           allNodesDf <- rbind(clusteredNodesDf, nonClusteredNodesDf)
           gosimClustersAll[[t]][[s]][[m]][[o]] <- allNodesDf
         }
@@ -129,12 +129,10 @@ drawClusters <- function(gosimObj, gosimSpiciExtended, addNonClusteredNodes) {
       #for(m in names(gosimObj[[t]][[s]])) {
         #for(o in c("BP")) {
         for(o in names(gosimObj[[t]][[s]][[m]])) {
+          nodes <- gosimSpiciExtended[[t]][[s]][[m]][[o]]
           edges <- gosimObj[[t]][[s]][[m]][[o]]
-          df <- gosimSpiciExtended[[t]][[s]][[m]][[o]]
-          if(addNonClusteredNodes && s != "cad") {
-            nodes <- df
-          } else {
-            nodes <- df[df$cluster != 0,]
+          if(!addNonClusteredNodes) {
+            nodes <- nodes[nodes$cluster != 0,]
             edges <- edges[edges$symbol1 %in% nodes$node, ]
             edges <- edges[edges$symbol2 %in% nodes$node, ]
           }
@@ -158,8 +156,8 @@ drawClusters <- function(gosimObj, gosimSpiciExtended, addNonClusteredNodes) {
             
             info2 <- paste(
               "Total nodes: " , nrow(gosimSpiciExtended[[t]][[s]][[m]][[o]]),
-              "     Clustered nodes: ", length(V(net)[V(net)$cluster != -1]),
-              "     Clusters: ", length(unique(V(net)[V(net)$cluster != -1]$cluster)), sep="")
+              "     Clustered nodes: ", length(V(net)[V(net)$cluster != 9999]),
+              "     Clusters: ", length(unique(V(net)[V(net)$cluster != 9999]$cluster)), sep="")
             
             plot(net, layout=lay,
                  vertex.label=nodes$node, vertex.shape="circle",
