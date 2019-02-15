@@ -89,7 +89,7 @@ addNonClusteredNodes <- function(gosimNodes, gosimSpici) {
           clusteredNodesDf <- gosimSpici[[t]][[s]][[m]][[o]]
           nonClusteredNodesDf <- data.frame(node = setdiff(gosimNodes[[t]][[s]][[m]][[o]],
                                                            gosimSpici[[t]][[s]][[m]][[o]]$node),
-                                            cluster = 0, stringsAsFactors = FALSE)
+                                            cluster = -1, stringsAsFactors = FALSE)
           allNodesDf <- rbind(clusteredNodesDf, nonClusteredNodesDf)
           gosimClustersAll[[t]][[s]][[m]][[o]] <- allNodesDf
         }
@@ -158,8 +158,8 @@ drawClusters <- function(gosimObj, gosimSpiciExtended, addNonClusteredNodes) {
             
             info2 <- paste(
               "Total nodes: " , nrow(gosimSpiciExtended[[t]][[s]][[m]][[o]]),
-              "     Clustered nodes: ", length(V(net)[V(net)$cluster != 0]),
-              "     Clusters: ", length(unique(V(net)[V(net)$cluster != 0]$cluster)), sep="")
+              "     Clustered nodes: ", length(V(net)[V(net)$cluster != -1]),
+              "     Clusters: ", length(unique(V(net)[V(net)$cluster != -1]$cluster)), sep="")
             
             plot(net, layout=lay,
                  vertex.label=nodes$node, vertex.shape="circle",
