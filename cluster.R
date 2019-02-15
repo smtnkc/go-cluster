@@ -3,6 +3,10 @@ library(igraph)
 library(qgraph)
 library(RColorBrewer)
 
+### NOTE ###
+### SPICi clustering is executed by spiciRunner.sh under RES/SPICi directory.
+### In this file, only its results are read, formatted, and visualized.
+
 gosim <- readGosim(topologies, subjects, measures, ontTypes, includeComb = FALSE)
 
 removeNAs <- function(gosimObj) {
@@ -41,7 +45,7 @@ gosimNodes <- getGosimNodes(gosim)
 
 ######################################################
 
-readClustersHelper <- function(clusterFile) {
+readSpiciHelper <- function(clusterFile) {
   fileContent <- readLines(clusterFile)
   clusterDF <- data.frame(node = character(), cluster = integer())
   if(length(fileContent) == 0) {
@@ -57,16 +61,16 @@ readClustersHelper <- function(clusterFile) {
   return(clusterDF)
 }
 
-readClusters <- function(gosimObj) {
+readSpici <- function(gosimObj) {
   clusters <- list()
   for(t in names(gosimObj)) {
     for(s in names(gosimObj[[t]])) {
       for(m in names(gosimObj[[t]][[s]])) {
         for(o in names(gosimObj[[t]][[s]][[m]])) {
-          fname <- paste("RES/SPICi/CLUSTERS/",
+          fname <- paste("RES/SPICi/LINE_BY_LINE_CLUSTERS/",
                         t, "_", s, "_", m, "_", o, ".tsv", sep = "")
           cat(fname, "...\n")
-          clusters[[t]][[s]][[m]][[o]] <- readClustersHelper(fname)
+          clusters[[t]][[s]][[m]][[o]] <- readSpiciHelper(fname)
         }
       }
     }
@@ -74,17 +78,17 @@ readClusters <- function(gosimObj) {
   return(clusters)
 }
 
-gosimClusters <- readClusters(gosim)
+gosimSpici <- readSpici(gosim)
 
-addNonClusteredNodes <- function(gosimNodes, gosimClusters) {
+addNonClusteredNodes <- function(gosimNodes, gosimSpici) {
   gosimClustersAll <- list()
-  for(t in names(gosimClusters)) {
-    for(s in names(gosimClusters[[t]])) {
-      for(m in names(gosimClusters[[t]][[s]])) {
-        for(o in names(gosimClusters[[t]][[s]][[m]])) {
-          clusteredNodesDf <- gosimClusters[[t]][[s]][[m]][[o]]
+  for(t in names(gosimSpici)) {
+    for(s in names(gosimSpici[[t]])) {
+      for(m in names(gosimSpici[[t]][[s]])) {
+        for(o in names(gosimSpici[[t]][[s]][[m]])) {
+          clusteredNodesDf <- gosimSpici[[t]][[s]][[m]][[o]]
           nonClusteredNodesDf <- data.frame(node = setdiff(gosimNodes[[t]][[s]][[m]][[o]],
-                                                           gosimClusters[[t]][[s]][[m]][[o]]$node),
+                                                           gosimSpici[[t]][[s]][[m]][[o]]$node),
                                             cluster = 0, stringsAsFactors = FALSE)
           allNodesDf <- rbind(clusteredNodesDf, nonClusteredNodesDf)
           gosimClustersAll[[t]][[s]][[m]][[o]] <- allNodesDf
@@ -95,11 +99,30 @@ addNonClusteredNodes <- function(gosimNodes, gosimClusters) {
   return(gosimClustersAll)
 }
 
-gosimClustersAll <- addNonClusteredNodes(gosimNodes, gosimClusters)
+gosimSpiciExtended <- addNonClusteredNodes(gosimNodes, gosimSpici)
 
 ######################################################
 
-drawClusters <- function(gosimObj, gosimClustersAll, addNonClusteredNodes) {
+writeFormattedSpici <- function(gosimSpiciExtended) {
+  for(t in names(gosimSpiciExtended)) {
+    for(s in names(gosimSpiciExtended[[t]])) {
+      for(m in names(gosimSpiciExtended[[t]][[s]])) {
+        for(o in names(gosimSpiciExtended[[t]][[s]][[m]])) {
+          df <- gosimSpiciExtended[[t]][[s]][[m]][[o]]
+          fname <- paste("RES/SPICi/CLUSTERS/", t, "_", s, "_", m, "_", o, ".csv", sep = "")
+          cat(fname, "...\n")
+          write.table(df, fname, row.names = FALSE, col.names = TRUE, sep=",")
+        }
+      }
+    }
+  }
+}
+
+writeFormattedSpici(gosimSpiciExtended)
+
+######################################################
+
+drawClusters <- function(gosimObj, gosimSpiciExtended, addNonClusteredNodes) {
   for(t in names(gosimObj)) {
     for(s in names(gosimObj[[t]])) {
       for(m in c("Wang")) {
@@ -107,10 +130,11 @@ drawClusters <- function(gosimObj, gosimClustersAll, addNonClusteredNodes) {
         #for(o in c("BP")) {
         for(o in names(gosimObj[[t]][[s]][[m]])) {
           edges <- gosimObj[[t]][[s]][[m]][[o]]
+          df <- gosimSpiciExtended[[t]][[s]][[m]][[o]]
           if(addNonClusteredNodes && s != "cad") {
-            nodes <- gosimClustersAll[[t]][[s]][[m]][[o]]
+            nodes <- df
           } else {
-            nodes <- gosimClusters[[t]][[s]][[m]][[o]]
+            nodes <- df[df$cluster != 0,]
             edges <- edges[edges$symbol1 %in% nodes$node, ]
             edges <- edges[edges$symbol2 %in% nodes$node, ]
           }
@@ -122,7 +146,7 @@ drawClusters <- function(gosimObj, gosimClustersAll, addNonClusteredNodes) {
             V(net)[V(net)$cluster == 0]$color <- "gray90"
             V(net)[V(net)$cluster != 0]$color <- colors[V(net)$cluster]
             
-            fname <- paste("PLOTS/CLUSTERS/", t, "_", s, "_", m, "_", o, ".png", sep="")
+            fname <- paste("PLOTS/CLUSTERS/SPICi/", t, "_", s, "_", m, "_", o, ".png", sep="")
             cat(fname, "...\n")
             png(filename=fname, width = 2280, height = 2280)
             lay <- layout_in_circle(net)
@@ -133,7 +157,7 @@ drawClusters <- function(gosimObj, gosimClustersAll, addNonClusteredNodes) {
                            "     Ontology: ", toupper(o), sep="")
             
             info2 <- paste(
-              "Total nodes: " , nrow(gosimClustersAll[[t]][[s]][[m]][[o]]),
+              "Total nodes: " , nrow(gosimSpiciExtended[[t]][[s]][[m]][[o]]),
               "     Clustered nodes: ", length(V(net)[V(net)$cluster != 0]),
               "     Clusters: ", length(unique(V(net)[V(net)$cluster != 0]$cluster)), sep="")
             
@@ -156,4 +180,4 @@ drawClusters <- function(gosimObj, gosimClustersAll, addNonClusteredNodes) {
   }
 }
 
-drawClusters(gosim, gosimClustersAll, addNonClusteredNodes = TRUE)
+drawClusters(gosim, gosimSpiciExtended, addNonClusteredNodes = TRUE)

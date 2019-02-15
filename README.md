@@ -9,6 +9,6 @@ You first need download and export link files into ``LINKS/`` directory using th
 ### Dependencies:
 To overcome possible dependency problems, run scripts in this order:
 
-``degs.R`` :arrow_right: ``links.R`` :arrow_right: ``msLinks.R`` :arrow_right: ``go.R``
+``degs.R`` :arrow_right: ``links.R`` :arrow_right: ``msLinks.R`` :arrow_right: ``go.R`` :arrow_right: ``plot.R || spici.R || mcl.R``
 
-> **Note:** All scripts are dependent to ``vars.R``
+> **Note:** All scripts depend to ``vars.R``
