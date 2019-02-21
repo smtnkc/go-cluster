@@ -77,6 +77,33 @@ getMCL <- function(adjMatrices) {
 
 gosimMCL <- getMCL(adjMatrices)
 
+updateClusterIDs <- function(gosimMCL) {
+  updatedGosimMCL <- list()
+  for(t in names(gosimMCL)) {
+    for(s in names(gosimMCL[[t]])) {
+      for(m in names(gosimMCL[[t]][[s]])) {
+        for(o in names(gosimMCL[[t]][[s]][[m]])) {
+          df <- gosimMCL[[t]][[s]][[m]][[o]]
+          id <- 1
+          curr <- df[1, 2]
+          prev <- curr
+
+          for(i in 1:nrow(df)) {
+            curr <- df[i, 2]
+            if(curr != prev) id <- id + 1
+            df[i, 2] <- id
+            prev <- curr
+          }
+          updatedGosimMCL[[t]][[s]][[m]][[o]] <- df
+        }
+      }
+    }
+  }
+  return(updatedGosimMCL)
+}
+
+gosimMCL <- updateClusterIDs(gosimMCL)
+
 ##########################################################
 
 writeMCL <- function(gosimMCL) {
@@ -126,14 +153,12 @@ drawClusters <- function(gosimObj, gosimMCL) {
         for(o in names(gosimObj[[t]][[s]][[m]])) {
           nodes <- gosimMCL[[t]][[s]][[m]][[o]]
           edges <- gosimObj[[t]][[s]][[m]][[o]]
+          edges <- edges[edges$symbol1 %in% nodes$node, ]
+          edges <- edges[edges$symbol2 %in% nodes$node, ]
           
           if(nrow(nodes) != 0 && nrow(edges) != 0) {
             net <- graph_from_data_frame(d=edges, vertices=nodes, directed=F)
-            qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
-            col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
-            colors <- sample(col_vector, 95, replace = TRUE)
-            V(net)[V(net)$cluster == 0]$color <- "gray90"
-            V(net)[V(net)$cluster != 0]$color <- colors[V(net)$cluster]
+            V(net)$color <- V(net)$cluster + 1
             
             fname <- paste("PLOTS/CLUSTERS/MCL/", t, "_", s, "_", m, "_", o, ".png", sep="")
             cat(fname, "...\n")
