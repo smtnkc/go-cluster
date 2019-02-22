@@ -184,8 +184,11 @@ drawClusters <- function(gosimObj, gosimSpiciExtended, addNonClusteredNodes, nam
             info2 <- paste(
               "Total nodes: " , nrow(gosimSpiciExtended[[t]][[s]][[m]][[o]]),
               "     Clustered nodes: ", length(V(net)[V(net)$cluster != 9999]),
-              "     Clusters: ", length(unique(V(net)[V(net)$cluster != 9999]$cluster)),
-              "     Clusters: ", BHIScores[[t]][[s]][[m]][[o]], sep="")
+              "     Clusters: ", length(unique(V(net)[V(net)$cluster != 9999]$cluster)), sep="")
+
+            if(naming == "PROBEID") {
+              info2 <- paste(info2, "     BHI: ", BHIScores[[t]][[s]][[m]][[o]], sep="")
+            }
             
             plot(net, layout=lay,
                  vertex.label=nodes$node, vertex.shape="circle",

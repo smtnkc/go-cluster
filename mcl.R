@@ -196,8 +196,11 @@ drawClusters <- function(gosimObj, gosimMCL, naming, BHIScores) {
             info2 <- paste(
               "Total nodes: " , nrow(gosimMCL[[t]][[s]][[m]][[o]]),
               "     Clustered nodes: ", length(V(net)[V(net)$cluster != -1]),
-              "     Clusters: ", length(unique(V(net)[V(net)$cluster != -1]$cluster)),
-              "     BHI: ", BHIScores[[t]][[s]][[m]][[o]], sep="")
+              "     Clusters: ", length(unique(V(net)[V(net)$cluster != -1]$cluster)), sep="")
+
+            if(naming == "PROBEID") {
+              info2 <- paste(info2, "     BHI: ", BHIScores[[t]][[s]][[m]][[o]], sep="")
+            }
             
             plot(net, layout=lay,
                  vertex.label=nodes$node, vertex.shape="circle",
