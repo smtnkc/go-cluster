@@ -4,7 +4,9 @@ library(qgraph)
 library(RColorBrewer)
 library(MCL)
 
-gosim <- readGosim(topologies, subjects, measures, ontTypes, includeComb = FALSE)
+NAMING = "PROBEID"
+
+gosim <- readGosim(topologies, subjects, measures, ontTypes, includeComb = FALSE, naming = NAMING)
 
 removeNAs <- function(gosimObj) {
   for(t in names(gosimObj)) {
@@ -32,7 +34,7 @@ getAdjMatrices <- function(gosimObj) {
           df <- gosimObj[[t]][[s]][[m]][[o]]
           nodes <- union(df[, 1], df[, 2])
           N <- length(nodes)
-          print(N)
+          cat(paste(t,"_",s,"_",m,"_",o," --> [", N, "x", N, "]\n", sep=""))
           adj <- matrix(0, N*N, nrow=N, ncol=N, dimnames = list(nodes, nodes))
           for(r in 1:nrow(df)) {
             adj[df[r,1], df[r,2]] <- df[r, 3]
@@ -46,7 +48,7 @@ getAdjMatrices <- function(gosimObj) {
   return(adjMatrices)
 }
 
-adjMatrices <- getAdjMatrices(gosim)
+#adjMatrices <- getAdjMatrices(gosim)
 
 ##########################################################
 
@@ -59,11 +61,7 @@ getMCL <- function(adjMatrices) {
           adj <- adjMatrices[[t]][[s]][[m]][[o]]
           adj <- adj[which(rowSums(adj) > 0), which(colSums(adj) > 0)] # to prevent mcl errors, remove unconnected nodes
           g <- graph_from_adjacency_matrix(adj, mode="undirected", weighted=TRUE)
-          x <- paste("[[\"",t, "\"]]",
-                     "[[\"",s, "\"]]",
-                     "[[\"",m, "\"]]",
-                     "[[\"",o, "\"]]", sep="")
-          cat(x, "--> edge:", length(E(g)), "vertex:", length(V(g)))
+          cat(paste(t,s,m,o, sep=""), "--> edge:", length(E(g)), "vertex:", length(V(g)))
           mclOutput <- mcl(x = g, addLoops=FALSE)
           cat(" cluster:", mclOutput$K, "\n")
           df <- data.frame(node = V(g)$name, cluster = mclOutput$Cluster)
@@ -75,7 +73,7 @@ getMCL <- function(adjMatrices) {
   return(gosimClusters)
 }
 
-gosimMCL <- getMCL(adjMatrices)
+#gosimMCL <- getMCL(adjMatrices)
 
 updateClusterIDs <- function(gosimMCL) {
   updatedGosimMCL <- list()
@@ -102,17 +100,18 @@ updateClusterIDs <- function(gosimMCL) {
   return(updatedGosimMCL)
 }
 
-gosimMCL <- updateClusterIDs(gosimMCL)
+#gosimMCL <- updateClusterIDs(gosimMCL)
 
 ##########################################################
 
-writeMCL <- function(gosimMCL) {
+writeMCL <- function(gosimMCL, naming) {
   for(t in names(gosimMCL)) {
     for(s in names(gosimMCL[[t]])) {
       for(m in names(gosimMCL[[t]][[s]])) {
         for(o in names(gosimMCL[[t]][[s]][[m]])) {
           df <- gosimMCL[[t]][[s]][[m]][[o]]
-          fname <- paste("RES/MCL/CLUSTERS/", t, "_", s, "_", m, "_", o, ".csv", sep = "")
+          fname <- paste("RES/MCL/CLUSTERS/by", naming, "/", t, 
+                         "_", s, "_", m, "_", o, ".csv", sep = "")
           cat(fname, "...\n")
           write.table(df, fname, row.names = FALSE, col.names = TRUE, sep=",")
         }
@@ -121,9 +120,9 @@ writeMCL <- function(gosimMCL) {
   }
 }
 
-writeMCL(gosimMCL)
+#writeMCL(gosimMCL, naming = NAMING)
 
-readMCL <- function(topologies, subjects, measures, ontTypes, includeComb) {
+readMCL <- function(topologies, subjects, measures, ontTypes, includeComb, naming) {
   gosimMCL <- list()
   if(includeComb) measures <- c(measures, "Comb")
   
@@ -131,7 +130,8 @@ readMCL <- function(topologies, subjects, measures, ontTypes, includeComb) {
     for(s in subjects) {
       for(m in measures) {
         for(o in ontTypes) {
-          fname <- paste("RES/MCL/CLUSTERS/", t , "_", s, "_", m, "_", o, ".csv", sep="")
+          fname <- paste("RES/MCL/CLUSTERS/by", naming, "/", t ,
+                         "_", s, "_", m, "_", o, ".csv", sep="")
           gosimMCL[[t]][[s]][[m]][[o]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
         }
       }
@@ -140,11 +140,33 @@ readMCL <- function(topologies, subjects, measures, ontTypes, includeComb) {
   return(gosimMCL)
 }
 
-gosimMCL <- readMCL(topologies, subjects, measures, ontTypes, includeComb = FALSE)
+gosimMCL <- readMCL(topologies, subjects, measures, ontTypes, includeComb = FALSE, naming = NAMING)
 
 ##########################################################
 
-drawClusters <- function(gosimObj, gosimMCL) {
+readBHIScores <- function(type, topologies, subjects, measures, ontTypes,
+                          includeComb, naming) {
+  BHIScores <- list()
+  fname  <- paste("RES/", type, "/SCORES.csv", sep = "")
+  df <- as.data.frame(fread(fname, header = TRUE, sep = ','))
+  for(t in topologies) {
+    for(s in subjects) {
+      for(m in measures) {
+        BHIScores[[t]][[s]][[m]] <- list()
+        for(o in ontTypes) {
+          BHIScores[[t]][[s]][[m]][[o]] <- 
+            df[df$topology==t & df$subject==s & df$measure==m & df$ontology==o, "BHI"]
+        }
+      }
+    }
+  }
+  return(BHIScores)
+}
+
+BHIScoresMCL <- readBHIScores("MCL", topologies, subjects, measures, ontTypes,
+                              includeComb, naming = NAMING)
+
+drawClusters <- function(gosimObj, gosimMCL, naming, BHIScores) {
   for(t in names(gosimObj)) {
     for(s in names(gosimObj[[t]])) {
       for(m in c("Wang")) {
@@ -153,14 +175,15 @@ drawClusters <- function(gosimObj, gosimMCL) {
         for(o in names(gosimObj[[t]][[s]][[m]])) {
           nodes <- gosimMCL[[t]][[s]][[m]][[o]]
           edges <- gosimObj[[t]][[s]][[m]][[o]]
-          edges <- edges[edges$symbol1 %in% nodes$node, ]
-          edges <- edges[edges$symbol2 %in% nodes$node, ]
+          edges <- edges[edges[,1] %in% nodes$node, ]
+          edges <- edges[edges[,2] %in% nodes$node, ]
           
           if(nrow(nodes) != 0 && nrow(edges) != 0) {
             net <- graph_from_data_frame(d=edges, vertices=nodes, directed=F)
             V(net)$color <- V(net)$cluster + 1
             
-            fname <- paste("PLOTS/CLUSTERS/MCL/", t, "_", s, "_", m, "_", o, ".png", sep="")
+            fname <- paste("PLOTS/CLUSTERS/MCL/by", naming, "/", t,
+                           "_", s, "_", m, "_", o, ".png", sep="")
             cat(fname, "...\n")
             png(filename=fname, width = 2280, height = 2280)
             lay <- layout_in_circle(net)
@@ -173,7 +196,8 @@ drawClusters <- function(gosimObj, gosimMCL) {
             info2 <- paste(
               "Total nodes: " , nrow(gosimMCL[[t]][[s]][[m]][[o]]),
               "     Clustered nodes: ", length(V(net)[V(net)$cluster != -1]),
-              "     Clusters: ", length(unique(V(net)[V(net)$cluster != -1]$cluster)), sep="")
+              "     Clusters: ", length(unique(V(net)[V(net)$cluster != -1]$cluster)),
+              "     BHI: ", BHIScores[[t]][[s]][[m]][[o]], sep="")
             
             plot(net, layout=lay,
                  vertex.label=nodes$node, vertex.shape="circle",
@@ -194,4 +218,4 @@ drawClusters <- function(gosimObj, gosimMCL) {
   }
 }
 
-drawClusters(gosim, gosimMCL)
+drawClusters(gosim, gosimMCL, NAMING, BHIScoresMCL)

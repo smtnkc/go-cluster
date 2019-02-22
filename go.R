@@ -73,7 +73,15 @@ addCombinedSimilarityScores <- function(gosimObj) {
   return(gosimComb)
 }
 
-writeGosim <- function(gosimObj, spici) {
+writeGosim <- function(gosimObj, spici, naming) {
+  if(naming == "SYMBOL") {
+    fdir <- "RES/GOSIM/bySYMBOL/"
+  } else {
+    fdir <- "RES/GOSIM/byPROBEID/"
+  }
+  if(spici) {
+    fdir <- paste(fdir, "forSPICi/", sep="")
+  }
   for(t in names(gosimObj)) {
     for(s in names(gosimObj[[t]])) {
       for(m in names(gosimObj[[t]][[s]])) {
@@ -81,13 +89,11 @@ writeGosim <- function(gosimObj, spici) {
           df <- gosimObj[[t]][[s]][[m]][[o]]
           if(spici) {
             df <- na.omit(df) # Since NAs are invalid for SPICi
-            row.names(df) <- NULL
+            row.names(df) <- NULL # Reset row ids
             df[df == 0] <- 0.00000001 # Since zero-weights are invalid for SPICi
             hasColNames <- FALSE # Since headers are invalid for SPICi
-            fdir <- "RES/SPICi/"
           } else {
             hasColNames <- TRUE
-            fdir <- "RES/GOSIM/"
           }
           fname <- paste(fdir, t, "_", s, "_", m, "_", o, ".tsv", sep="")
           print(fname)
@@ -126,6 +132,49 @@ generateTestLinks <- function(msDegLinks, size) {
 
 # gosim <- createGoSim(msDegLinks, measures, ontTypes)
 # gosimWithComb <- addCombinedSimilarityScores(gosim)
-# writeGosim(gosimWithComb, spici = TRUE) # When exporting for SPIci, remove NAs, zero-weighths, and colnames
 
-gosimWithComb <- readGosim(topologies, subjects, measures, ontTypes, includeComb = TRUE)
+gosimWithComb <- readGosim(topologies, subjects, measures, ontTypes,
+                           includeComb = TRUE, naming = "SYMBOL")
+
+##########################################################
+
+convertSymbols2Probes <- function(gosimObj) {
+  gosimPr <- list()
+  hguSym <- hgu133aSYMBOL
+  mappedPr <- mappedkeys(hguSym)
+  dfSymPr <- as.data.frame(hguSym[mappedPr])
+  
+  for(t in names(gosimObj)) {
+    for(s in names(gosimObj[[t]])) {
+      for(m in names(gosimObj[[t]][[s]])) {
+        for(o in names(gosimObj[[t]][[s]][[m]])) {
+          cat(paste("mapping ", t,"_",s,"_",m,"_",o," ...\n", sep=""))
+          df <- gosimObj[[t]][[s]][[m]][[o]]
+          ont <- colnames(df)[3]
+          nodes <- sort(union(df[, 1], df[, 2]))
+          map <- dfSymPr[dfSymPr$symbol %in% nodes, ]
+          dfPr <- data.frame(probe1 = character(),
+                             probe2 = character(),
+                             cluster = character(),
+                             stringsAsFactors = FALSE)
+          for(i in 1:nrow(df)) {
+            fromPr <- map[map$symbol == df[i, "symbol1"], "probe_id"]
+            toPr <- map[map$symbol == df[i, "symbol2"], "probe_id"]
+            for(pr1 in fromPr) {
+              for(pr2 in toPr) {
+                dfPr <- rbind(dfPr, data.frame(probe1=pr1, probe2=pr2, ont=df[i,3],
+                                               stringsAsFactors = FALSE))
+              }
+            }
+          }
+          gosimPr[[t]][[s]][[m]][[o]] <- dfPr
+        }
+      }
+    }
+  }
+  return(gosimPr)
+}
+
+gosimPrWithComb <- convertSymbols2Probes(gosimWithComb)
+
+writeGosim(gosimPrWithComb, spici = TRUE, naming = "PROBEID")

@@ -3,6 +3,9 @@ library(rstudioapi)
 library(data.table) # fread
 library(org.Hs.eg.db) # BiocManager::install("org.Hs.eg.db", version = "3.8")
 library(GOSemSim) # BiocManager::install("GOSemSim", version = "3.8")
+library(hgu133a.db)
+library(annotate)
+
 
 rm(list=ls())
 setwd(dirname(getSourceEditorContext()$path))
@@ -54,7 +57,7 @@ FormatDf <- function(df) {
   return (df)
 }
 
-readGosim <- function(topologies, subjects, measures, ontTypes, includeComb) {
+readGosim <- function(topologies, subjects, measures, ontTypes, includeComb, naming) {
   gosim <- list()
   if(includeComb) measures <- c(measures, "Comb")
   
@@ -62,7 +65,7 @@ readGosim <- function(topologies, subjects, measures, ontTypes, includeComb) {
     for(s in subjects) {
       for(m in measures) {
         for(o in ontTypes) {
-          fname <- paste("RES/GOSIM/", t , "_", s, "_", m, "_", o, ".tsv", sep="")
+          fname <- paste("RES/GOSIM/by", naming, "/", t , "_", s, "_", m, "_", o, ".tsv", sep="")
           gosim[[t]][[s]][[m]][[o]] <- as.data.frame(fread(fname, header = TRUE, sep = '\t'))
         }
       }
