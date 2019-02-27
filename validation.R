@@ -40,7 +40,7 @@ getBHIScores <- function(gosimClusters) {
           df <- gosimClusters[[t]][[s]][[m]][[o]]
           clusters <- df$cluster
           names(clusters) <- df$node
-          score <- BHI(clusters, annotation="hgu133a.db", names=names(clusters), category=o)
+          score <- BHI(clusters, annotation="hgu133a.db", names=names(clusters), category="all")
           print(score)
           BHIScores[[t]][[s]][[m]][[o]] <- score
         }
@@ -50,8 +50,8 @@ getBHIScores <- function(gosimClusters) {
   return(BHIScores)
 }
 
-# BHIScoresMCL <- getBHIScores(gosimMCL)
-# BHIScoresSpici <- getBHIScores(gosimSpici)
+BHIScoresMCL <- getBHIScores(gosimMCL)
+BHIScoresSpici <- getBHIScores(gosimSpici)
 
 writeBHIScores <- function(BHIScores, type) {
   fname  <- paste("RES/", type, "/SCORES.csv", sep = "")
@@ -109,3 +109,31 @@ BHIScoresMCL <- readBHIScores("MCL", topologies, subjects, measures, ontTypes,
 
 BHIScoresSpici <- readBHIScores("SPICi", topologies, subjects, measures, ontTypes,
                               includeComb, naming = NAMING)
+
+#################################################################
+
+# Statistics
+
+BHI_MCL <- as.data.frame(fread("RES/MCL/SCORES.csv", header = TRUE, sep = ','))
+BHI_SPICi <- as.data.frame(fread("RES/SPICi/SCORES.csv", header = TRUE, sep = ','))
+
+aggregate(BHI_MCL[, "BHI"], list(BHI_MCL$ontology), mean)
+aggregate(BHI_SPICi[, "BHI"], list(BHI_SPICi$ontology), mean)
+
+aggregate(BHI_MCL[, "BHI"], list(BHI_MCL$measure), mean)
+aggregate(BHI_SPICi[, "BHI"], list(BHI_SPICi$measure), mean)
+
+aggregate(BHI_MCL[, "BHI"], list(BHI_MCL$topology), mean)
+aggregate(BHI_SPICi[, "BHI"], list(BHI_SPICi$topology), mean)
+
+##### Get only MF ontologies:
+BHI_MCL_MF <- BHI_MCL[BHI_MCL$ontology == "MF", ]
+BHI_SPICi_MF <- BHI_SPICi[BHI_SPICi$ontology == "MF", ]
+
+##### Comparing measures by using only MF ontologies:
+aggregate(BHI_MCL_MF[, "BHI"], list(BHI_MCL_MF$measure), mean)
+aggregate(BHI_SPICi_MF[, "BHI"], list(BHI_SPICi_MF$measure), mean)
+
+##### Comparing topologies by using only MF ontologies:
+aggregate(BHI_MCL_MF[, "BHI"], list(BHI_MCL_MF$topology), mean)
+aggregate(BHI_SPICi_MF[, "BHI"], list(BHI_SPICi_MF$topology), mean)
