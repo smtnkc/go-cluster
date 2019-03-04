@@ -36,11 +36,52 @@ t.means.ALL$Mean_BHI <- round(t.means.ALL$Mean_BHI, 5)
 
 ###### Write mean stats
 
-write.table(o.means.ALL, "RES/validation_stats/byOntology.csv",
-            row.names = FALSE, col.names = TRUE, sep=",")
+# write.table(o.means.ALL, "RES/validation_stats/byOntology.csv",
+#             row.names = FALSE, col.names = TRUE, sep=",")
+# 
+# write.table(m.means.ALL, "RES/validation_stats/byMeasure.csv",
+#             row.names = FALSE, col.names = TRUE, sep=",")
+# 
+# write.table(t.means.ALL, "RES/validation_stats/byTopology.csv",
+#             row.names = FALSE, col.names = TRUE, sep=",")
 
-write.table(m.means.ALL, "RES/validation_stats/byMeasure.csv",
-            row.names = FALSE, col.names = TRUE, sep=",")
+library(ggplot2)
+library(ggpubr)
 
-write.table(t.means.ALL, "RES/validation_stats/byTopology.csv",
-            row.names = FALSE, col.names = TRUE, sep=",")
+getBoxPlot <- function(bhiDf, aesX, aesY, aesFill, s) {
+  p <-  ggplot(bhiDf, aes(x=bhiDf[,aesX], y=bhiDf[,aesY], fill=bhiDf[,aesFill])) +
+        geom_boxplot() + 
+        theme_minimal() +
+        ylim(0.15, 0.5) +
+        labs(x = aesX, y = aesY, fill = aesFill) +
+        theme(legend.position="top",
+              axis.text=element_text(size=s-4),
+              axis.title.x=element_text(size=s),
+              axis.title.y=element_text(size=s),
+              legend.title=element_text(size=s), 
+              legend.text=element_text(size=s))
+  return(p)
+}
+
+png(filename="PLOTS/VALIDATION/topology.png", width = 1440, height = 960)
+p1 <- getBoxPlot(bhi.MCL, "subject", "BHI", "topology", 18)
+p2 <- getBoxPlot(bhi.SPICi, "subject", "BHI", "topology", 18)
+ggarrange(p1, p2, labels=c("MCL", "SPICi"), font.label=list(size=22), ncol=2, nrow=1)
+dev.off()
+
+##############################
+
+png(filename="PLOTS/VALIDATION/ontology.png", width = 1440, height = 960)
+p1 <- getBoxPlot(bhi.MCL, "subject", "BHI", "ontology", 18)
+p2 <- getBoxPlot(bhi.SPICi, "subject", "BHI", "ontology", 18)
+ggarrange(p1, p2, labels=c("MCL", "SPICi"), font.label=list(size=22), ncol=2, nrow=1)
+dev.off()
+
+##############################
+
+png(filename="PLOTS/VALIDATION/measure.png", width = 1440, height = 960)
+p1 <- getBoxPlot(bhi.MCL, "subject", "BHI", "measure", 18)
+p2 <- getBoxPlot(bhi.SPICi, "subject", "BHI", "measure", 18)
+ggarrange(p1, p2, labels=c("MCL", "SPICi"), font.label=list(size=22), ncol=2, nrow=1)
+dev.off()
+
