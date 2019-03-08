@@ -5,7 +5,7 @@ NAMING = "PROBEID"
 
 readClusters <- function(type, topologies, subjects, measures, ontTypes,
                          includeComb, naming) {
-  gosimMCL <- list()
+  gosimX <- list()
   if(includeComb) measures <- c(measures, "Comb")
   
   for(t in topologies) {
@@ -14,12 +14,12 @@ readClusters <- function(type, topologies, subjects, measures, ontTypes,
         for(o in ontTypes) {
           fname <- paste("RES/", type, "/CLUSTERS/by", naming, "/", t ,
                          "_", s, "_", m, "_", o, ".csv", sep="")
-          gosimMCL[[t]][[s]][[m]][[o]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
+          gosimX[[t]][[s]][[m]][[o]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
         }
       }
     }
   }
-  return(gosimMCL)
+  return(gosimX)
 }
 
 gosimMCL <- readClusters("MCL", topologies, subjects, measures, ontTypes,
@@ -28,9 +28,12 @@ gosimMCL <- readClusters("MCL", topologies, subjects, measures, ontTypes,
 gosimSpici <- readClusters("SPICi", topologies, subjects, measures, ontTypes,
                            includeComb = FALSE, naming = NAMING)
 
+gosimLinkcomm <- readClusters("LINKCOMM", topologies, subjects, measures, ontTypes,
+                           includeComb = FALSE, naming = NAMING)
+
 ################################################################
 
-getBHIScores <- function(gosimClusters) {
+getBHIScores <- function(gosimClusters, includeNonClusteredNodes) {
   BHIScores <- list()
   for(t in names(gosimClusters)) {
     for(s in names(gosimClusters[[t]])) {
@@ -38,9 +41,17 @@ getBHIScores <- function(gosimClusters) {
         BHIScores[[t]][[s]][[m]] <- list()
         for(o in names(gosimClusters[[t]][[s]][[m]])) {
           df <- gosimClusters[[t]][[s]][[m]][[o]]
-          clusters <- df$cluster
-          names(clusters) <- df$node
-          score <- BHI(clusters, annotation="hgu133a.db", names=names(clusters), category="all")
+          if(!includeNonClusteredNodes) {
+            df <- df[df$cluster != 9999, ]
+          }
+          if(nrow(df) > 0) {
+            clusters <- df$cluster
+            names(clusters) <- df$node
+            score <- BHI(clusters, annotation="hgu133a.db", names=names(clusters), category="all")
+          }
+          else {
+            score <- 0
+          }
           print(score)
           BHIScores[[t]][[s]][[m]][[o]] <- score
         }
@@ -50,8 +61,11 @@ getBHIScores <- function(gosimClusters) {
   return(BHIScores)
 }
 
-# BHIScoresMCL <- getBHIScores(gosimMCL)
-# BHIScoresSpici <- getBHIScores(gosimSpici)
+# BHIScoresMCL <- getBHIScores(gosimMCL, includeNonClusteredNodes = TRUE) # there are not any non-clustered nodes in MCL
+# BHIScoresSpici <- getBHIScores(gosimSpici, includeNonClusteredNodes = TRUE) # cluster id of non-clustered nodes assigned as 9999
+# BHIScoresLinkcomm <- getBHIScores(gosimLinkcomm, includeNonClusteredNodes = TRUE) # cluster id of non-clustered nodes assigned as 9999
+
+################################################################
 
 writeBHIScores <- function(BHIScores, type) {
   fname  <- paste("RES/", type, "/SCORES.csv", sep = "")
@@ -82,6 +96,7 @@ writeBHIScores <- function(BHIScores, type) {
 
 # writeBHIScores(BHIScoresMCL, "MCL")
 # writeBHIScores(BHIScoresSpici, "SPICi")
+# writeBHIScores(BHIScoresLinkcomm, "LINKCOMM")
 
 #################################################################
 
@@ -105,7 +120,10 @@ readBHIScores <- function(type, topologies, subjects, measures, ontTypes,
 }
 
 BHIScoresMCL <- readBHIScores("MCL", topologies, subjects, measures, ontTypes,
-                              includeComb, naming = NAMING)
+                              includeComb = FALSE, naming = NAMING)
 
 BHIScoresSpici <- readBHIScores("SPICi", topologies, subjects, measures, ontTypes,
-                              includeComb, naming = NAMING)
+                              includeComb = FALSE, naming = NAMING)
+
+BHIScoresLinkcomm <- readBHIScores("LINKCOMM", topologies, subjects, measures, ontTypes,
+                                includeComb = FALSE, naming = NAMING)

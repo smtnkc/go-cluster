@@ -54,16 +54,22 @@ getAdjMatrices <- function(gosimObj) {
 
 getMCL <- function(adjMatrices) {
   gosimClusters <- list()
+  cat("topology,subject,measure,ontology,edge,node,cluster,time\n")
   for(t in names(adjMatrices)) {
     for(s in names(adjMatrices[[t]])) {
       for(m in names(adjMatrices[[t]][[s]])) {
         for(o in names(adjMatrices[[t]][[s]][[m]])) {
           adj <- adjMatrices[[t]][[s]][[m]][[o]]
           adj <- adj[which(rowSums(adj) > 0), which(colSums(adj) > 0)] # to prevent mcl errors, remove unconnected nodes
+          t_start <- Sys.time()
           g <- graph_from_adjacency_matrix(adj, mode="undirected", weighted=TRUE)
-          cat(paste(t,s,m,o, sep=""), "--> edge:", length(E(g)), "vertex:", length(V(g)))
           mclOutput <- mcl(x = g, addLoops=FALSE)
-          cat(" cluster:", mclOutput$K, "\n")
+          t_end <- Sys.time()
+          cat(paste(t,",",s,",",m,",",o,",",
+                    length(E(g)),",",
+                    length(V(g)),",",
+                    mclOutput$K,",",
+                    round(difftime(t_end, t_start, units = "secs"),5), sep=""), "\n")
           df <- data.frame(node = V(g)$name, cluster = mclOutput$Cluster)
           gosimClusters[[t]][[s]][[m]][[o]] <- df[order(df$cluster), ]
         }

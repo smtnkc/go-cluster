@@ -148,6 +148,8 @@ readBHIScores <- function(type, topologies, subjects, measures, ontTypes,
 BHIScoresSpici <- readBHIScores("SPICi", topologies, subjects, measures, ontTypes,
                               includeComb, naming = NAMING)
 
+######################################################
+
 drawClusters <- function(gosimObj, gosimSpiciExtended, addNonClusteredNodes, naming, BHIScores) {
   for(t in names(gosimObj)) {
     for(s in names(gosimObj[[t]])) {
