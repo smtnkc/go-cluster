@@ -100,9 +100,11 @@ bhi.SPICi$clustering <- c(rep("SPICi", nrow(bhi.SPICi)))
 bhi.Linkcomm$clustering <- c(rep("Linkcomm", nrow(bhi.Linkcomm)))
 bhi.ALL <- rbind(bhi.MCL, bhi.SPICi, bhi.Linkcomm)
 
-bhi.ALL.Wang.mets <- bhi.ALL[bhi.ALL$measure == "Wang" & bhi.ALL$subject == "mets", ]
-bhi.ALL.Wang.t2d  <- bhi.ALL[bhi.ALL$measure == "Wang" & bhi.ALL$subject == "t2d", ]
-bhi.ALL.Wang.cad  <- bhi.ALL[bhi.ALL$measure == "Wang" & bhi.ALL$subject == "cad", ]
+MEAS <- "Wang"
+
+bhi.ALL.MEAS.mets <- bhi.ALL[bhi.ALL$measure == MEAS & bhi.ALL$subject == "mets", ]
+bhi.ALL.MEAS.t2d  <- bhi.ALL[bhi.ALL$measure == MEAS & bhi.ALL$subject == "t2d", ]
+bhi.ALL.MEAS.cad  <- bhi.ALL[bhi.ALL$measure == MEAS & bhi.ALL$subject == "cad", ]
 
 getScatterPlot <- function(bhiDf, aesX, aesY, aesShape, aesColor, s) {
   p <- ggplot(bhiDf, aes(x=bhiDf[,aesX], y=bhiDf[,aesY])) +
@@ -110,6 +112,7 @@ getScatterPlot <- function(bhiDf, aesX, aesY, aesShape, aesColor, s) {
     scale_shape_manual(values=c(16, 17))+
     scale_color_manual(values=c('#EA2027', '#0652DD', '#FFC312'))+
     labs(x = aesX, y = aesY, shape = aesShape, color = aesColor) +
+    ylim(0.25, 0.5) +
     theme(legend.position="top",
           axis.text=element_text(size=s-4),
           axis.title.x=element_text(size=s),
@@ -119,10 +122,10 @@ getScatterPlot <- function(bhiDf, aesX, aesY, aesShape, aesColor, s) {
   return(p)
 }
 
-p1 <- getScatterPlot(bhi.ALL.Wang.mets, aesX="clustering", aesY="BHI", aesShape="topology", aesColor="ontology", s=18)
-p2 <- getScatterPlot(bhi.ALL.Wang.t2d, aesX="clustering", aesY="BHI", aesShape="topology", aesColor="ontology", s=18)
-p3 <- getScatterPlot(bhi.ALL.Wang.cad, aesX="clustering", aesY="BHI", aesShape="topology", aesColor="ontology", s=18)
+p1 <- getScatterPlot(bhi.ALL.MEAS.mets, aesX="clustering", aesY="BHI", aesShape="topology", aesColor="ontology", s=18)
+p2 <- getScatterPlot(bhi.ALL.MEAS.t2d, aesX="clustering", aesY="BHI", aesShape="topology", aesColor="ontology", s=18)
+p3 <- getScatterPlot(bhi.ALL.MEAS.cad, aesX="clustering", aesY="BHI", aesShape="topology", aesColor="ontology", s=18)
 
-png(filename="PLOTS/VALIDATION/BHI.png", width = 1800, height = 960)
+png(filename=paste("PLOTS/VALIDATION/BHI_", MEAS, ".png", sep=""), width = 1800, height = 960)
 ggarrange(p1, p2, p3, labels=c("METS", "T2D", "CAD"), font.label=list(size=22), ncol=3, nrow=1)
 dev.off()
