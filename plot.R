@@ -67,3 +67,26 @@ generateDensityPlotsTogether <- function(gosim) {
 }
 
 generateDensityPlotsTogether(gosim)
+
+####################################################################
+
+ctrl <- data.frame(subject="ctrl",exp=as.data.frame(apply(subsets[["mets"]][,1:9],1,median))[,1])
+ms <- data.frame(subject="ms",exp=as.data.frame(apply(subsets[["mets"]][,10:15],1,median))[,1])
+t2d  <- data.frame(subject="t2d",exp=as.data.frame(apply(subsets[["t2d"]][,10:17],1,median))[,1])
+cad  <- data.frame(subject="cad",exp=as.data.frame(apply(subsets[["cad"]][,10:15],1,median))[,1])
+df <- rbind(ctrl,ms,t2d,cad)
+
+svg(filename = "PLOTS/dist.svg", width=6, height=3)
+par(mfrow=c(1,1), mar=c(2.8,2.6,0.0,0.0) + 0.2)
+plot(density(apply(subsets[["cad"]][,10:15],1,median)),
+     main="", xlab="", ylab="", zero.line = FALSE,
+     col = "#F19C99", lwd=2, cex.lab=0.7, cex.axis=0.7) #cad
+mtext(side = 1, text = "Gene Expression", line = 2, cex=0.7)
+mtext(side = 2, text = "Density", line = 2, cex=0.7)
+legend("topright", legend=c("CTRL", "MS", "CAD", "T2D"),
+       col=c("#000099","#9999FF","#F19C99", "#66B2FF"), lty=1, lwd=2, cex=0.7)
+
+lines(density(apply(subsets[["mets"]][,10:15],1,median)), col = "#9999FF", lwd=2) #ms
+lines(density(apply(subsets[["mets"]][,1:9],1,median)), col = "#000099", lwd=2) #ctrl
+lines(density(apply(subsets[["t2d"]][,10:17],1,median)), col = "#66B2FF", lwd=2) #t2d
+dev.off()

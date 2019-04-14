@@ -67,8 +67,12 @@ getBHIScores <- function(gosimClusters, includeNonClusteredNodes) {
 
 ################################################################
 
-writeBHIScores <- function(BHIScores, type) {
-  fname  <- paste("RES/", type, "/SCORES.csv", sep = "")
+writeBHIScores <- function(BHIScores, type, addNonClusteredNodes) {
+  if(addNonClusteredNodes) {
+    fname  <- paste("RES/", type, "/SCORES.csv", sep = "")
+  } else {
+    fname  <- paste("RES/", type, "/SCORES_clustered.csv", sep = "")
+  }
   df <- data.frame(topology=character(),
                    subject=character(),
                    measure=character(),
@@ -94,9 +98,9 @@ writeBHIScores <- function(BHIScores, type) {
   write.table(df, fname, row.names = FALSE, col.names = TRUE, sep=",")
 }
 
-# writeBHIScores(BHIScoresMCL, "MCL")
-# writeBHIScores(BHIScoresSpici, "SPICi")
-# writeBHIScores(BHIScoresLinkcomm, "LINKCOMM")
+# writeBHIScores(BHIScoresMCL, "MCL", addNonClusteredNodes = TRUE)
+# writeBHIScores(BHIScoresSpici, "SPICi", addNonClusteredNodes = TRUE)
+# writeBHIScores(BHIScoresLinkcomm, "LINKCOMM", addNonClusteredNodes = TRUE)
 
 #################################################################
 
