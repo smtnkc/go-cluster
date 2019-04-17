@@ -52,7 +52,10 @@ getLinkcomm <- function(gosim) {
           t_start <- Sys.time()
           lc <- getLinkCommunities(gosim[[t]][[s]][[m]][[o]], plot = FALSE, verbose = FALSE)
           t_end <- Sys.time()
-          gosimClusters[[t]][[s]][[m]][[o]] <- lc[["nodeclusters"]]
+          dfLC <- lc[["nodeclusters"]]
+          dfLC <- transform(dfLC, node = as.character(node))
+          dfLC <- transform(dfLC, cluster = as.integer(cluster))
+          gosimClusters[[t]][[s]][[m]][[o]] <- dfLC
           cat(paste(t,",",s,",",m,",",o,",",
                     lc[["numbers"]][1],",",
                     lc[["numbers"]][2],",",

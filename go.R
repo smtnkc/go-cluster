@@ -155,7 +155,7 @@ convertSymbols2Probes <- function(gosimObj) {
           map <- dfSymPr[dfSymPr$symbol %in% nodes, ]
           dfPr <- data.frame(probe1 = character(),
                              probe2 = character(),
-                             cluster = character(),
+                             ont = character(),
                              stringsAsFactors = FALSE)
           for(i in 1:nrow(df)) {
             fromPr <- map[map$symbol == df[i, "symbol1"], "probe_id"]

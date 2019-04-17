@@ -15,6 +15,8 @@ removeNAs <- function(gosimObj) {
 }
 gosim <- removeNAs(gosim)
 
+##############################################
+
 getGosimCounts <- function(gosim) {
   gosimCounts <- list()
 
@@ -38,3 +40,26 @@ getGosimCounts <- function(gosim) {
   return(gosimCounts)
 }
 gosimCounts <- getGosimCounts(gosim)
+
+##############################################
+NAMING <- "SYMBOL"
+readClusters <- function(type, topologies, subjects, measures, ontTypes, includeComb, naming) {
+  gosimX <- list()
+  if(includeComb) measures <- c(measures, "Comb")
+  
+  for(t in topologies) {
+    for(s in subjects) {
+      for(m in measures) {
+        for(o in ontTypes) {
+          fname <- paste("RES/", type, "/CLUSTERS/by", naming, "/", t ,
+                         "_", s, "_", m, "_", o, ".csv", sep="")
+          gosimX[[t]][[s]][[m]][[o]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
+        }
+      }
+    }
+  }
+  return(gosimX)
+}
+gosimMCL <- readClusters("MCL", topologies, subjects, measures, ontTypes, includeComb = FALSE, naming = NAMING)
+gosimSpici <- readClusters("SPICi", topologies, subjects, measures, ontTypes, includeComb = FALSE, naming = NAMING)
+gosimLinkcomm <- readClusters("LINKCOMM", topologies, subjects, measures, ontTypes, includeComb = FALSE, naming = NAMING)
