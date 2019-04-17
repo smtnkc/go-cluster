@@ -1,5 +1,5 @@
 source("vars.R")
-NAMING <- "SYMBOL"
+NAMING <- "PROBEID"
 gosim <- readGosim(topologies, subjects, measures, ontTypes, includeComb = FALSE, naming = NAMING)
 removeNAs <- function(gosimObj) {
   for(t in names(gosimObj)) {
@@ -17,9 +17,7 @@ gosim <- removeNAs(gosim)
 
 ##############################################
 
-getGosimCounts <- function(gosim) {
-  gosimCounts <- list()
-
+printGosimCounts <- function(gosim) {
   for(t in topologies) {
     for(s in subjects) {
       n <- 0  
@@ -34,15 +32,14 @@ getGosimCounts <- function(gosim) {
       }
       n <- n/i
       e <- e/i
-      gosimCounts[[t]][[s]] <- paste(round(n,0), "/", round(e,0), sep="")
+      print(paste(t,"_",s,"      ",round(n,0), "/", round(e,0), sep=""))
     }
   }
-  return(gosimCounts)
 }
-gosimCounts <- getGosimCounts(gosim)
+printGosimCounts(gosim)
 
 ##############################################
-NAMING <- "SYMBOL"
+
 readClusters <- function(type, topologies, subjects, measures, ontTypes, includeComb, naming) {
   gosimX <- list()
   if(includeComb) measures <- c(measures, "Comb")
@@ -63,3 +60,41 @@ readClusters <- function(type, topologies, subjects, measures, ontTypes, include
 gosimMCL <- readClusters("MCL", topologies, subjects, measures, ontTypes, includeComb = FALSE, naming = NAMING)
 gosimSpici <- readClusters("SPICi", topologies, subjects, measures, ontTypes, includeComb = FALSE, naming = NAMING)
 gosimLinkcomm <- readClusters("LINKCOMM", topologies, subjects, measures, ontTypes, includeComb = FALSE, naming = NAMING)
+
+printClusterStats <- function(clusters) {
+  for(c in names(clusters)) {
+    for(t in names(clusters[[c]])) {
+      for(s in names(clusters[[c]][[t]])) {
+        nn<-0
+        nc<-0
+        for(m in names(clusters[[c]][[t]][[s]])) {
+          for(o in names(clusters[[c]][[t]][[s]][[m]])) {
+            df <- clusters[[c]][[t]][[s]][[m]][[o]]
+            nn <- nn + length(unique(df[df$cluster != 9999,]$node))
+            nc <- nc + length(unique(df[df$cluster != 9999,]$cluster))
+          }
+        }
+        print(paste(c,"_",t,"_",s,"      ",round(nn/15,2),"/",round(nc/15,2),"=",round(nn/nc,2), sep=""))
+      }
+    }
+  }
+}
+printClusterStats(list("mcl" = gosimMCL, "spici" = gosimSpici, "linkcomm" = gosimLinkcomm))
+
+#########################################################################################
+
+bhi.MCL <- as.data.frame(fread("RES/MCL/SCORES.csv", header = TRUE, sep = ','))
+bhi.SPICi <- as.data.frame(fread("RES/SPICi/SCORES.csv", header = TRUE, sep = ','))
+bhi.Linkcomm <- as.data.frame(fread("RES/LINKCOMM/SCORES.csv", header = TRUE, sep = ','))
+
+bhi.MCL$clustering <- c(rep("MCL", nrow(bhi.MCL)))
+bhi.SPICi$clustering <- c(rep("SPICi", nrow(bhi.SPICi)))
+bhi.Linkcomm$clustering <- c(rep("Linkcomm", nrow(bhi.Linkcomm)))
+bhi.ALL <- rbind(bhi.MCL, bhi.SPICi, bhi.Linkcomm)
+library(dplyr)
+printBHIStats <- function(bhi.ALL) {
+  bhi.ALL %>% group_by(topology, subject, clustering) %>% summarise(BHI_mean=(mean(BHI)))
+}
+printBHIStats(bhi.ALL)
+
+
