@@ -1,6 +1,40 @@
 source("vars.R")
 
-gosim <- readGosim(topologies, subjects, measures, ontTypes, includeComb = FALSE)
+gosim <- readGosim(topologies, subjects, measures, ontTypes, includeComb = FALSE, naming = "SYMBOL")
+
+####################################################################
+
+generateBoxPlots <- function(gosim, subject) {
+  boxCols <- c("#aaa69d", "#ccae62", "#40407a", "#cc8e35", "#218c74")
+  onts <- list()
+  for(t in topologies) {
+    for(o in ontTypes) {
+      df <- data.frame(measure = character(), score = double())
+      for(m in measures) {
+        temp <- data.frame(measure=m, score=gosim[[t]][[subject]][[m]][[o]][[o]])
+        df <- rbind(df, temp)
+      }
+      onts[[t]][[o]] <- df
+    }
+  }
+  svg(filename = paste("PLOTS/box_", subject,".svg", sep=""), width=10, height=8)
+  par(mfrow=c(2,3), mar=c(4,4,2.3,0.0) + 0.5)
+  for(t in topologies) {
+    i <- 1
+    for(o in ontTypes) {
+      boxplot(score~measure,data=onts[[t]][[o]], main="", xlab="", ylab="", col=boxCols, cex.lab=1, cex.axis=1.3)
+      mtext(side = 3, text = o, line = 0.8, cex=1, font=2)
+      mtext(side = 1, text = "GO Similarity Measure", line = 3, cex=0.8)
+      mtext(side = 2, text = "GO Similarity Score", line = 2.6, cex=0.8)
+      i <- i+1
+    }
+  }
+  dev.off()
+}
+
+generateBoxPlots(gosim, "mets")
+
+####################################################################
 
 generateDensityPlotsSeperated <- function(gosim) {
   lineColors <- c("orange", "red", "green", "purple", "blue")
@@ -37,7 +71,11 @@ generateDensityPlotsTogether <- function(gosim) {
   lineColors <- c("orange", "red", "green", "purple", "blue")
   for(t in names(gosim)) {
     for(s in c("cad")) { #for(s in names(gosim[[t]])) {
-      for(o in c("BP")) { #for(o in names(gosim[[t]][[s]][[1]])) {
+      fname <- paste("PLOTS/DENSITY/", t, "_", s, "_All.svg", sep="")
+      cat(fname, "...\n")
+      svg(filename = fname, width=9, height=3)
+      par(mfrow=c(1,3), mar=c(2.8,2.8,1.0,0.2) + 0.2)
+      for(o in c("BP", "CC", "MF")) { #for(o in names(gosim[[t]][[s]][[1]])) {
         i <- 1
         for(m in rev(names(gosim[[t]][[s]]))) {
           df <- gosim[[t]][[s]][[m]][[o]]
@@ -48,20 +86,19 @@ generateDensityPlotsTogether <- function(gosim) {
                            "   Subject: ", toupper(s),
                            "   Measure: ", "All",
                            "   Ontology: ", toupper(o), sep="")
-            fname <- paste("PLOTS/DENSITY/", t, "_", s, "_All_", o,  ".png", sep="")
-            cat(fname, "...\n")
-            png(filename=fname, width = 960, height = 640)
-            xLabel <- "Weight"
-            plot(d, main=title, xlab=xLabel, col=lineColors[i], ylim=c(0,8),
-                 cex.lab=1.5, cex.main=1.5, cex.axis=1.5, lwd=2)
+            plot(d, main=o, xlab="", ylab="", zero.line = FALSE,
+                 lwd=2, col=lineColors[i], ylim=c(0,8), cex.lab=1, cex.axis=1)
+            mtext(side = 1, text = "GO Semantic Similarity Score", line = 2, cex=0.7)
+            mtext(side = 2, text = "Density", line = 2, cex=0.7)
+
           } else {
             lines(d, col=lineColors[i], lwd=2)
           }
-          legend("topright", legend = names(rev(gosim[[t]][[s]])), col = lineColors, lwd=2, cex=1.2)
+          legend("topright", legend = names(rev(gosim[[t]][[s]])), col = lineColors, lty=1, lwd=2, cex=1)
           i <- i+1
         }
-        dev.off()
       }
+      dev.off()
     }
   }
 }

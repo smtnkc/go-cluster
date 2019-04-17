@@ -4,7 +4,7 @@ library(qgraph)
 library(RColorBrewer)
 library(MCL)
 
-NAMING = "PROBEID"
+NAMING <- "PROBEID"
 
 gosim <- readGosim(topologies, subjects, measures, ontTypes, includeComb = FALSE, naming = NAMING)
 

@@ -1,7 +1,7 @@
 source("vars.R")
 library(linkcomm)
 
-NAMING = "PROBEID"
+NAMING <- "PROBEID"
 
 gosim <- readGosim(topologies, subjects, measures, ontTypes, includeComb = FALSE, naming = NAMING)
 
