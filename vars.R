@@ -1,11 +1,19 @@
-library(readr)
-library(rstudioapi)
-library(data.table) # fread
-library(org.Hs.eg.db) # BiocManager::install("org.Hs.eg.db", version = "3.8")
-library(GOSemSim) # BiocManager::install("GOSemSim", version = "3.8")
-library(hgu133a.db)
-library(annotate)
-
+if (!require('readr')) install.packages('readr')
+if (!require('rstudioapi')) install.packages('rstudioapi')
+if (!require('data.table')) install.packages('data.table')
+if (!require('igraph')) install.packages('igraph')
+if (!require('dplyr')) install.packages('dplyr')
+if (!require('ggplot2')) install.packages('ggplot2')
+if (!require('gridExtra')) install.packages('gridExtra')
+if (!require('BiocManager')) install.packages('BiocManager')
+if (!require('org.Hs.eg.db')) BiocManager::install('org.Hs.eg.db')
+if (!require('GOSemSim')) BiocManager::install('GOSemSim')
+if (!require('hgu133a.db')) BiocManager::install('hgu133a.db')
+if (!require('annotate')) BiocManager::install('annotate')
+if (!require('qgraph')) install.packages('qgraph')
+if (!require("MCL")) install.packages("MCL")
+if (!require("linkcomm")) install.packages("linkcomm")
+if (!require("profmem")) install.packages("profmem")
 
 rm(list=ls())
 setwd(dirname(getSourceEditorContext()$path))
@@ -73,3 +81,6 @@ readGosim <- function(topologies, subjects, measures, ontTypes, includeComb, nam
   }
   return(gosim)
 }
+
+globalDarkColorPalette <- c("#528ECC", "#E8D08B", "#F19C99", "#6A6AB0", "#61AD85")
+globalLightColorPalette<- c("#A6CFFF", "#CCFFCC", "#FFCCCC", "#FFE599", "#CDA2BE")

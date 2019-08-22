@@ -1,0 +1,13 @@
+
+
+LINKCOMM
+
+In MS-CAD pair, four modules including {HCFC1, ANAPC2, VPS28, PCGF6} and {FRG1, POLR2L, COX5A, RPS9,  ARPC1B, ANAPC2, ISYNA1, GSPT2, VPS28}, {COX5A, GLUD2} and {NFKBIB, S100A8} have been revealed in addition to 5 genes {ENTPD2, LHX2, SIX3, TNFRSF13B, TNFSF13} which are also shared but placed in different clusters.
+
+In T2D-CAD pair, one module including two genes {ALAS2, HBD} has been detected in addition to one shared gene {SP1}.
+
+SPICi
+
+In MS-CAD pair, three modules {ANAPC2, GSPT2, RPS9, POLR2L}, {LHX2, SIX3}, {TNFRSF13B, TNFSF13} and 11 genes {COX5A, VPS28, FRG1, ARPC1B, NFKBIB, S100A8, ENTPD2, GLUD2, HCFC1, ISYNA1, PCGF6}.
+
+In T2D-CAD pair, three genes {ALAS2, HBD, SP1} has been detected as shared but in different clusters.

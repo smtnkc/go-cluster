@@ -1,418 +1,108 @@
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Comb_BP.tsv
-average cluster size: 4.57895
-There are 57 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Comb_CC.tsv
-average cluster size: 4.05208
-There are 96 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Comb_MF.tsv
-average cluster size: 3.82051
-There are 78 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Jiang_BP.tsv
-average cluster size: 4.17857
-There are 84 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Jiang_CC.tsv
-average cluster size: 5.51064
-There are 94 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Jiang_MF.tsv
-average cluster size: 5.25926
-There are 81 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Lin_BP.tsv
-average cluster size: 4.54795
-There are 73 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Lin_CC.tsv
-average cluster size: 5.01075
-There are 93 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Lin_MF.tsv
-average cluster size: 4.67073
-There are 82 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Rel_BP.tsv
-average cluster size: 4.47887
-There are 71 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Rel_CC.tsv
-average cluster size: 4.14286
-There are 98 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Rel_MF.tsv
-average cluster size: 3.67045
-There are 88 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Resnik_BP.tsv
-average cluster size: 2.79412
-There are 34 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Resnik_CC.tsv
-average cluster size: 3
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Resnik_MF.tsv
-average cluster size: 3.16667
-There are 6 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Wang_BP.tsv
-average cluster size: 4.39683
-There are 63 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Wang_CC.tsv
-average cluster size: 4.84
-There are 100 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_cad_Wang_MF.tsv
-average cluster size: 4.92941
-There are 85 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Comb_BP.tsv
-average cluster size: 2
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Comb_CC.tsv
-average cluster size: 2.5
-There are 4 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Comb_MF.tsv
-average cluster size: 2.5
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Jiang_BP.tsv
-average cluster size: 2
-There are 4 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Jiang_CC.tsv
-average cluster size: 4
-There are 3 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Jiang_MF.tsv
-average cluster size: 4.5
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Lin_BP.tsv
-average cluster size: 2
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Lin_CC.tsv
-average cluster size: 3
-There are 4 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Lin_MF.tsv
-average cluster size: 3
-There are 3 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Rel_BP.tsv
-average cluster size: 2
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Rel_CC.tsv
-average cluster size: 2.5
-There are 4 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Rel_MF.tsv
-average cluster size: 2.5
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Resnik_BP.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Resnik_CC.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Resnik_MF.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Wang_BP.tsv
-average cluster size: 2
-There are 3 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Wang_CC.tsv
-average cluster size: 4
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_mets_Wang_MF.tsv
-average cluster size: 4.5
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Comb_BP.tsv
-average cluster size: 2
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Comb_CC.tsv
-average cluster size: 2.16667
-There are 6 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Comb_MF.tsv
-average cluster size: 2
-There are 4 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Jiang_BP.tsv
-average cluster size: 2
-There are 3 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Jiang_CC.tsv
-average cluster size: 3
-There are 8 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Jiang_MF.tsv
-average cluster size: 2.42857
-There are 7 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Lin_BP.tsv
-average cluster size: 2.5
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Lin_CC.tsv
-average cluster size: 2.875
-There are 8 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Lin_MF.tsv
-average cluster size: 3
-There are 3 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Rel_BP.tsv
-average cluster size: 2.5
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Rel_CC.tsv
-average cluster size: 2.125
-There are 8 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Rel_MF.tsv
-average cluster size: 2
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Resnik_BP.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Resnik_CC.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Resnik_MF.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Wang_BP.tsv
-average cluster size: 2
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Wang_CC.tsv
-average cluster size: 2.875
-There are 8 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/inet_t2d_Wang_MF.tsv
-average cluster size: 2.5
-There are 6 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Comb_BP.tsv
-average cluster size: 3.93827
-There are 81 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Comb_CC.tsv
-average cluster size: 3.9823
-There are 113 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Comb_MF.tsv
-average cluster size: 3.53535
-There are 99 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Jiang_BP.tsv
-average cluster size: 4.5
-There are 90 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Jiang_CC.tsv
-average cluster size: 6.19
-There are 100 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Jiang_MF.tsv
-average cluster size: 4.86792
-There are 106 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Lin_BP.tsv
-average cluster size: 4.23762
-There are 101 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Lin_CC.tsv
-average cluster size: 4.9009
-There are 111 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Lin_MF.tsv
-average cluster size: 4.19643
-There are 112 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Rel_BP.tsv
-average cluster size: 4.22917
-There are 96 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Rel_CC.tsv
-average cluster size: 4.27434
-There are 113 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Rel_MF.tsv
-average cluster size: 3.53922
-There are 102 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Resnik_BP.tsv
-average cluster size: 2.97059
-There are 34 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Resnik_CC.tsv
-average cluster size: 3
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Resnik_MF.tsv
-average cluster size: 2.875
-There are 8 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Wang_BP.tsv
-average cluster size: 4.42308
-There are 78 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Wang_CC.tsv
-average cluster size: 5.54902
-There are 102 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_cad_Wang_MF.tsv
-average cluster size: 4.83178
-There are 107 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Comb_BP.tsv
-average cluster size: 2
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Comb_CC.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Comb_MF.tsv
-average cluster size: 2
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Jiang_BP.tsv
-average cluster size: 2
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Jiang_CC.tsv
-average cluster size: 2
-There are 2 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Jiang_MF.tsv
-average cluster size: 4
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Lin_BP.tsv
-average cluster size: 2
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Lin_CC.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Lin_MF.tsv
-average cluster size: 4
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Rel_BP.tsv
-average cluster size: 2
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Rel_CC.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Rel_MF.tsv
-average cluster size: 4
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Resnik_BP.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Resnik_CC.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Resnik_MF.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Wang_BP.tsv
-average cluster size: 2
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Wang_CC.tsv
-average cluster size: 3
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_mets_Wang_MF.tsv
-average cluster size: 4
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Comb_BP.tsv
-average cluster size: 2.6
-There are 5 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Comb_CC.tsv
-average cluster size: 2.21429
-There are 14 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Comb_MF.tsv
-average cluster size: 2.375
-There are 8 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Jiang_BP.tsv
-average cluster size: 2.5
-There are 8 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Jiang_CC.tsv
-average cluster size: 3.11765
-There are 17 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Jiang_MF.tsv
-average cluster size: 2.69231
-There are 13 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Lin_BP.tsv
-average cluster size: 2.44444
-There are 9 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Lin_CC.tsv
-average cluster size: 2.78571
-There are 14 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Lin_MF.tsv
-average cluster size: 2.81818
-There are 11 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Rel_BP.tsv
-average cluster size: 2.42857
-There are 7 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Rel_CC.tsv
-average cluster size: 2.46154
-There are 13 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Rel_MF.tsv
-average cluster size: 2.375
-There are 8 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Resnik_BP.tsv
-average cluster size: 2
-There are 1 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Resnik_CC.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Resnik_MF.tsv
-There are 0 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Wang_BP.tsv
-average cluster size: 2.6
-There are 5 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Wang_CC.tsv
-average cluster size: 2.86667
-There are 15 clusters.
-
-./../GOSIM/byPROBEID/forSPICi/string_t2d_Wang_MF.tsv
-average cluster size: 2.5
-There are 18 clusters.
-
+inet,cad,Comb,BP,4.57895,57,29
+inet,cad,Comb,CC,4.05208,96,26
+inet,cad,Comb,MF,3.82051,78,24
+inet,cad,Jiang,BP,4.17857,84,24
+inet,cad,Jiang,CC,5.51064,94,23
+inet,cad,Jiang,MF,5.25926,81,27
+inet,cad,Lin,BP,4.54795,73,23
+inet,cad,Lin,CC,5.01075,93,24
+inet,cad,Lin,MF,4.67073,82,25
+inet,cad,Rel,BP,4.47887,71,27
+inet,cad,Rel,CC,4.14286,98,24
+inet,cad,Rel,MF,3.67045,88,24
+inet,cad,Resnik,BP,2.79412,34,23
+inet,cad,Resnik,CC,3,1,29
+inet,cad,Resnik,MF,3.16667,6,24
+inet,cad,Wang,BP,4.39683,63,25
+inet,cad,Wang,CC,4.84,100,28
+inet,cad,Wang,MF,4.92941,85,24
+inet,mets,Comb,BP,2,1,6
+inet,mets,Comb,CC,2.5,4,5
+inet,mets,Comb,MF,2.5,2,4
+inet,mets,Jiang,BP,2,4,5
+inet,mets,Jiang,CC,4,3,6
+inet,mets,Jiang,MF,4.5,2,6
+inet,mets,Lin,BP,2,2,9
+inet,mets,Lin,CC,3,4,8
+inet,mets,Lin,MF,3,3,9
+inet,mets,Rel,BP,2,2,6
+inet,mets,Rel,CC,2.5,4,7
+inet,mets,Rel,MF,2.5,2,6
+inet,mets,Resnik,BP,0,0,6
+inet,mets,Resnik,CC,0,0,7
+inet,mets,Resnik,MF,0,0,5
+inet,mets,Wang,BP,2,3,5
+inet,mets,Wang,CC,4,2,5
+inet,mets,Wang,MF,4.5,2,5
+inet,t2d,Comb,BP,2,2,5
+inet,t2d,Comb,CC,2.16667,6,6
+inet,t2d,Comb,MF,2,4,7
+inet,t2d,Jiang,BP,2,3,7
+inet,t2d,Jiang,CC,3,8,6
+inet,t2d,Jiang,MF,2.42857,7,6
+inet,t2d,Lin,BP,2.5,2,5
+inet,t2d,Lin,CC,2.875,8,6
+inet,t2d,Lin,MF,3,3,6
+inet,t2d,Rel,BP,2.5,2,7
+inet,t2d,Rel,CC,2.125,8,6
+inet,t2d,Rel,MF,2,2,8
+inet,t2d,Resnik,BP,0,0,5
+inet,t2d,Resnik,CC,0,0,6
+inet,t2d,Resnik,MF,0,0,5
+inet,t2d,Wang,BP,2,2,7
+inet,t2d,Wang,CC,2.875,8,6
+inet,t2d,Wang,MF,2.5,6,6
+string,cad,Comb,BP,3.93827,81,18
+string,cad,Comb,CC,3.9823,113,19
+string,cad,Comb,MF,3.53535,99,19
+string,cad,Jiang,BP,4.5,90,18
+string,cad,Jiang,CC,6.19,100,22
+string,cad,Jiang,MF,4.86792,106,18
+string,cad,Lin,BP,4.23762,101,17
+string,cad,Lin,CC,4.9009,111,18
+string,cad,Lin,MF,4.19643,112,18
+string,cad,Rel,BP,4.22917,96,21
+string,cad,Rel,CC,4.27434,113,19
+string,cad,Rel,MF,3.53922,102,19
+string,cad,Resnik,BP,2.97059,34,21
+string,cad,Resnik,CC,3,2,18
+string,cad,Resnik,MF,2.875,8,18
+string,cad,Wang,BP,4.42308,78,18
+string,cad,Wang,CC,5.54902,102,18
+string,cad,Wang,MF,4.83178,107,18
+string,mets,Comb,BP,2,1,5
+string,mets,Comb,CC,0,0,6
+string,mets,Comb,MF,2,1,6
+string,mets,Jiang,BP,2,1,7
+string,mets,Jiang,CC,2,2,5
+string,mets,Jiang,MF,4,1,7
+string,mets,Lin,BP,2,1,6
+string,mets,Lin,CC,0,0,5
+string,mets,Lin,MF,4,1,5
+string,mets,Rel,BP,2,1,6
+string,mets,Rel,CC,0,0,6
+string,mets,Rel,MF,4,1,7
+string,mets,Resnik,BP,0,0,8
+string,mets,Resnik,CC,0,0,6
+string,mets,Resnik,MF,0,0,8
+string,mets,Wang,BP,2,1,8
+string,mets,Wang,CC,3,1,6
+string,mets,Wang,MF,4,1,6
+string,t2d,Comb,BP,2.6,5,6
+string,t2d,Comb,CC,2.21429,14,7
+string,t2d,Comb,MF,2.375,8,6
+string,t2d,Jiang,BP,2.5,8,6
+string,t2d,Jiang,CC,3.11765,17,5
+string,t2d,Jiang,MF,2.69231,13,6
+string,t2d,Lin,BP,2.44444,9,6
+string,t2d,Lin,CC,2.78571,14,6
+string,t2d,Lin,MF,2.81818,11,5
+string,t2d,Rel,BP,2.42857,7,5
+string,t2d,Rel,CC,2.46154,13,5
+string,t2d,Rel,MF,2.375,8,5
+string,t2d,Resnik,BP,2,1,5
+string,t2d,Resnik,CC,0,0,5
+string,t2d,Resnik,MF,0,0,6
+string,t2d,Wang,BP,2.6,5,5
+string,t2d,Wang,CC,2.86667,15,7
+string,t2d,Wang,MF,2.5,18,5

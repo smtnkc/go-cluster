@@ -5,7 +5,7 @@ gosim <- readGosim(topologies, subjects, measures, ontTypes, includeComb = FALSE
 ####################################################################
 
 generateBoxPlots <- function(gosim, subject) {
-  boxCols <- c("#aaa69d", "#ccae62", "#40407a", "#cc8e35", "#218c74")
+  boxCols <- globalDarkColorPalette
   onts <- list()
   for(t in topologies) {
     for(o in ontTypes) {
@@ -32,7 +32,7 @@ generateBoxPlots <- function(gosim, subject) {
   dev.off()
 }
 
-generateBoxPlots(gosim, "mets")
+generateBoxPlots(gosim, "t2d")
 
 ####################################################################
 

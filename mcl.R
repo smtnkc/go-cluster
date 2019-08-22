@@ -1,8 +1,4 @@
 source("vars.R")
-library(igraph)
-library(qgraph)
-library(RColorBrewer)
-library(MCL)
 
 NAMING <- "PROBEID"
 
@@ -26,21 +22,29 @@ gosim <- removeNAs(gosim)
 ##########################################################
 
 getAdjMatrices <- function(gosimObj) {
+  cat("topology,subject,measure,ontology,dimension,time(s),memory(mb)\n")
   adjMatrices <- list()
   for(t in names(gosimObj)) {
     for(s in names(gosimObj[[t]])) {
       for(m in names(gosimObj[[t]][[s]])) {
         for(o in names(gosimObj[[t]][[s]][[m]])) {
+          t_start <- Sys.time()
+          p <- profmem({
           df <- gosimObj[[t]][[s]][[m]][[o]]
           nodes <- union(df[, 1], df[, 2])
           N <- length(nodes)
-          cat(paste(t,"_",s,"_",m,"_",o," --> [", N, "x", N, "]\n", sep=""))
           adj <- matrix(0, N*N, nrow=N, ncol=N, dimnames = list(nodes, nodes))
           for(r in 1:nrow(df)) {
             adj[df[r,1], df[r,2]] <- df[r, 3]
             adj[df[r,2], df[r,1]] <- df[r, 3]
           }
           adjMatrices[[t]][[s]][[m]][[o]] <- adj
+          t_end <- Sys.time()
+          })
+
+          cat(paste(t,s,m,o,N,
+                    round(difftime(t_end, t_start, units = "secs"),5),
+                    total(p)/1000000, sep=","), "\n")
         }
       }
     }
@@ -54,22 +58,25 @@ getAdjMatrices <- function(gosimObj) {
 
 getMCL <- function(adjMatrices) {
   gosimClusters <- list()
-  cat("topology,subject,measure,ontology,edge,node,cluster,time\n")
+  cat("topology,subject,measure,ontology,edge,node,cluster,time(s),memory(mb)\n")
   for(t in names(adjMatrices)) {
     for(s in names(adjMatrices[[t]])) {
       for(m in names(adjMatrices[[t]][[s]])) {
         for(o in names(adjMatrices[[t]][[s]][[m]])) {
+          t_start <- Sys.time()
+          p <- profmem({
           adj <- adjMatrices[[t]][[s]][[m]][[o]]
           adj <- adj[which(rowSums(adj) > 0), which(colSums(adj) > 0)] # to prevent mcl errors, remove unconnected nodes
-          t_start <- Sys.time()
           g <- graph_from_adjacency_matrix(adj, mode="undirected", weighted=TRUE)
           mclOutput <- mcl(x = g, addLoops=FALSE)
+          })
           t_end <- Sys.time()
-          cat(paste(t,",",s,",",m,",",o,",",
-                    length(E(g)),",",
-                    length(V(g)),",",
-                    mclOutput$K,",",
-                    round(difftime(t_end, t_start, units = "secs"),5), sep=""), "\n")
+          cat(paste(t,s,m,o,
+                    length(E(g)),
+                    length(V(g)),
+                    mclOutput$K,
+                    round(difftime(t_end, t_start, units = "secs"),5),
+                    total(p)/1000000, sep=","), "\n")
           df <- data.frame(node = V(g)$name, cluster = mclOutput$Cluster)
           gosimClusters[[t]][[s]][[m]][[o]] <- df[order(df$cluster), ]
         }

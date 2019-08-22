@@ -1,5 +1,4 @@
 source("vars.R")
-library(linkcomm)
 
 NAMING <- "PROBEID"
 
@@ -43,24 +42,27 @@ gosimNodes <- getGosimNodes(gosim)
 
 getLinkcomm <- function(gosim) {
   gosimClusters <- list()
-  cat("topology,subject,measure,ontology,edge,node,cluster,time\n")
+  cat("topology,subject,measure,ontology,edge,node,cluster,time(s),memory(mb)\n")
   for(t in names(gosim)) {
     for(s in names(gosim[[t]])) {
       for(m in names(gosim[[t]][[s]])) {
         for(o in names(gosim[[t]][[s]][[m]])) {
           df <- gosim[[t]][[s]][[m]][[o]]
           t_start <- Sys.time()
+          p <- profmem({
           lc <- getLinkCommunities(gosim[[t]][[s]][[m]][[o]], plot = FALSE, verbose = FALSE)
+          })
           t_end <- Sys.time()
           dfLC <- lc[["nodeclusters"]]
           dfLC <- transform(dfLC, node = as.character(node))
           dfLC <- transform(dfLC, cluster = as.integer(cluster))
           gosimClusters[[t]][[s]][[m]][[o]] <- dfLC
-          cat(paste(t,",",s,",",m,",",o,",",
-                    lc[["numbers"]][1],",",
-                    lc[["numbers"]][2],",",
-                    lc[["numbers"]][3],",",
-                    round(difftime(t_end, t_start, units = "secs"),5), sep=""), "\n")
+          cat(paste(t,s,m,o,
+                    lc[["numbers"]][1],
+                    lc[["numbers"]][2],
+                    lc[["numbers"]][3],
+                    round(difftime(t_end, t_start, units = "secs"),5),
+                    total(p)/1000000, sep=","), "\n")
         }
       }
     }
