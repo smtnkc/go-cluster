@@ -49,7 +49,7 @@ getSigDFs <- function(subsets, sigs) {
   sigDFs <- list()
   for(s in names(subsets)) {
     df <- subsets[[s]]
-    sigDFs[[s]] <- subset(df, row.names(df) %in% sigs[[s]])  
+    sigDFs[[s]] <- subset(df, row.names(df) %in% sigs[[s]])
   }
   return(sigDFs)
 }
@@ -102,7 +102,7 @@ writeDEGs(degs, FC, P_VAL)
 # designs[["mets"]] <- cbind(Intercept=1,Group=c(rep(0,9),rep(1,(length(subsets[["mets"]])-9))))
 # designs[["t2d"]]  <- cbind(Intercept=1,Group=c(rep(0,9),rep(1,(length(subsets[["t2d"]])-9))))
 # designs[["cad"]]  <- cbind(Intercept=1,Group=c(rep(0,9),rep(1,(length(subsets[["cad"]])-9))))
-# 
+#
 # fit.mets <- lmFit(subsets[["mets"]], designs[["mets"]])
 # fit.t2d  <- lmFit(subsets[["t2d"]], designs[["t2d"]])
 # fit.cad  <- lmFit(subsets[["cad"]], designs[["cad"]])

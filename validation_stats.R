@@ -10,7 +10,7 @@ bhi.Linkcomm <- as.data.frame(fread("RES/LINKCOMM/SCORES.csv", header = TRUE, se
 #   aggregate(bhi.MCL[, "BHI"], list(bhi.MCL$ontology), mean),
 #   aggregate(bhi.SPICi[, "BHI"], list(bhi.SPICi$ontology), mean),
 #   aggregate(bhi.Linkcomm[, "BHI"], list(bhi.Linkcomm$ontology), mean)))
-# 
+#
 # o.means.ALL$clustering <- c(rep("MCL", 3), rep("SPICi", 3), rep("LINKCOMM", 3))
 # colnames(o.means.ALL) <- c("ontology", "Mean_BHI", "clustering")
 # o.means.ALL <- o.means.ALL[,c("clustering", "ontology", "Mean_BHI")]
@@ -22,7 +22,7 @@ bhi.Linkcomm <- as.data.frame(fread("RES/LINKCOMM/SCORES.csv", header = TRUE, se
 #   aggregate(bhi.MCL[, "BHI"], list(bhi.MCL$measure), mean),
 #   aggregate(bhi.SPICi[, "BHI"], list(bhi.SPICi$measure), mean),
 #   aggregate(bhi.Linkcomm[, "BHI"], list(bhi.Linkcomm$measure), mean)))
-# 
+#
 # m.means.ALL$clustering <- c(rep("MCL", 5), rep("SPICi", 5), rep("LINKCOMM", 5))
 # colnames(m.means.ALL) <- c("measure", "Mean_BHI", "clustering")
 # m.means.ALL <- m.means.ALL[,c("clustering", "measure", "Mean_BHI")]
@@ -34,7 +34,7 @@ bhi.Linkcomm <- as.data.frame(fread("RES/LINKCOMM/SCORES.csv", header = TRUE, se
 #   aggregate(bhi.MCL[, "BHI"], list(bhi.MCL$topology), mean),
 #   aggregate(bhi.SPICi[, "BHI"], list(bhi.SPICi$topology), mean),
 #   aggregate(bhi.Linkcomm[, "BHI"], list(bhi.Linkcomm$topology), mean)))
-# 
+#
 # t.means.ALL$clustering <- c(rep("MCL", 2), rep("SPICi", 2), rep("LINKCOMM", 2))
 # colnames(t.means.ALL) <- c("topology", "Mean_BHI", "clustering")
 # t.means.ALL <- t.means.ALL[,c("clustering", "topology", "Mean_BHI")]
@@ -44,10 +44,10 @@ bhi.Linkcomm <- as.data.frame(fread("RES/LINKCOMM/SCORES.csv", header = TRUE, se
 
 # write.table(o.means.ALL, "RES/validation_stats/byOntology.csv",
 #             row.names = FALSE, col.names = TRUE, sep=",")
-# 
+#
 # write.table(m.means.ALL, "RES/validation_stats/byMeasure.csv",
 #             row.names = FALSE, col.names = TRUE, sep=",")
-# 
+#
 # write.table(t.means.ALL, "RES/validation_stats/byTopology.csv",
 #             row.names = FALSE, col.names = TRUE, sep=",")
 
@@ -55,7 +55,7 @@ bhi.Linkcomm <- as.data.frame(fread("RES/LINKCOMM/SCORES.csv", header = TRUE, se
 
 # getBoxPlot <- function(bhiDf, aesX, aesY, aesFill, s) {
 #   p <-  ggplot(bhiDf, aes(x=bhiDf[,aesX], y=bhiDf[,aesY], fill=bhiDf[,aesFill])) +
-#         geom_boxplot() + 
+#         geom_boxplot() +
 #         theme_minimal() +
 #         ylim(0.15, 0.5) +
 #         labs(x = aesX, y = aesY, fill = aesFill) +
@@ -63,11 +63,11 @@ bhi.Linkcomm <- as.data.frame(fread("RES/LINKCOMM/SCORES.csv", header = TRUE, se
 #               axis.text=element_text(size=s-4),
 #               axis.title.x=element_text(size=s),
 #               axis.title.y=element_text(size=s),
-#               legend.title=element_text(size=s), 
+#               legend.title=element_text(size=s),
 #               legend.text=element_text(size=s))
 #   return(p)
 # }
-# 
+#
 # png(filename="PLOTS/VALIDATION/topology.png", width = 2400, height = 960)
 # p1 <- getBoxPlot(bhi.MCL, "subject", "BHI", "topology", 18)
 # p2 <- getBoxPlot(bhi.SPICi, "subject", "BHI", "topology", 18)
@@ -117,7 +117,7 @@ getScatterPlot <- function(bhiDf, aesX, aesY, aesShape, aesColor, s) {
           axis.text=element_text(size=s-4),
           axis.title.x=element_text(size=s),
           axis.title.y=element_text(size=s),
-          legend.title=element_text(size=s-2), 
+          legend.title=element_text(size=s-2),
           legend.text=element_text(size=s-4))
   return(p)
 }

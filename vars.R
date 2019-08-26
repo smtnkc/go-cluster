@@ -47,7 +47,7 @@ P_VAL = "0.05"
 
 Stringify <- function(n) {
   # converts 0.05 to "005"
-  s <- paste(substr(n, 1, regexpr("\\.", n)[1]-1), 
+  s <- paste(substr(n, 1, regexpr("\\.", n)[1]-1),
              substr(n, regexpr("\\.", n)[1]+1, nchar(n)), sep="")
   return(s)
 }
@@ -68,7 +68,7 @@ FormatDf <- function(df) {
 readGosim <- function(topologies, subjects, measures, ontTypes, includeComb, naming) {
   gosim <- list()
   if(includeComb) measures <- c(measures, "Comb")
-  
+
   for(t in topologies) {
     for(s in subjects) {
       for(m in measures) {

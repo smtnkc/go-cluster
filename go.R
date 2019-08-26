@@ -37,13 +37,13 @@ createGoSim <- function(msDegLinks, measures, ontTypes) {
           dfGo <- msDegLinks[[t]][[s]]
           dfGo[, o] <- NA
           for(r in 1:nrow(dfGo)) {
-            dfGo[r, o] <- geneSim(dfGo[r,1], dfGo[r,2], 
+            dfGo[r, o] <- geneSim(dfGo[r,1], dfGo[r,2],
                                   semData = ontologies[[o]],
                                   measure = m, combine = "BMA")[[1]]
           }
           gosim[[t]][[s]][[m]][[o]] <- dfGo
           elapsed_time <- proc.time() - start_time
-          cat(paste(t, ",", s, ",", m, ",", o, ",", round(elapsed_time[[3]],3), sep=""), "\n") 
+          cat(paste(t, ",", s, ",", m, ",", o, ",", round(elapsed_time[[3]],3), sep=""), "\n")
         }
       }
     }
@@ -58,9 +58,9 @@ addCombinedSimilarityScores <- function(gosimObj) {
     for(s in names(gosimComb[[t]])) {
       subj <- gosimObj[[t]][[s]]
       gosimComb[[t]][[s]][["Comb"]] <- subj[[1]] # just take a copy
-      
+
       for(o in names(gosimComb[[t]][[s]][["Comb"]])) {
-        gosimComb[[t]][[s]][["Comb"]][[o]][, o] <- NA # delete copied weights 
+        gosimComb[[t]][[s]][["Comb"]][[o]][, o] <- NA # delete copied weights
         total <- 0
         for(m in names(subj)) {
           df <- gosimObj[[t]][[s]][[m]]
@@ -143,7 +143,7 @@ convertSymbols2Probes <- function(gosimObj) {
   hguSym <- hgu133aSYMBOL
   mappedPr <- mappedkeys(hguSym)
   dfSymPr <- as.data.frame(hguSym[mappedPr])
-  
+
   for(t in names(gosimObj)) {
     for(s in names(gosimObj[[t]])) {
       for(m in names(gosimObj[[t]][[s]])) {

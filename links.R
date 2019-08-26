@@ -73,7 +73,7 @@ createLinks <- function(dfLinks, map) {
   dfNewLinks <- dfNewLinks[!is.na(dfNewLinks[, "symbol1"]), ] # remove NA rows
   dfNewLinks <- dfNewLinks[!is.na(dfNewLinks[, "symbol2"]), ] # remove NA rows
   nNew <- nrow(dfNewLinks)
-  
+
   cat("*********", nOld-nNew, "NULL rows are removed!\n")
   return(dfNewLinks)
 }

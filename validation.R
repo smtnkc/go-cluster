@@ -7,7 +7,7 @@ readClusters <- function(type, topologies, subjects, measures, ontTypes,
                          includeComb, naming) {
   gosimX <- list()
   if(includeComb) measures <- c(measures, "Comb")
-  
+
   for(t in topologies) {
     for(s in subjects) {
       for(m in measures) {
@@ -73,7 +73,7 @@ writeBHIScores <- function(BHIScores, type) {
                    ontology=character(),
                    score=double(),
                    stringsAsFactors = FALSE)
-  
+
   for(t in names(BHIScores)) {
     for(s in names(BHIScores[[t]])) {
       for(m in names(BHIScores[[t]][[s]])) {
@@ -108,7 +108,7 @@ readBHIScores <- function(type, topologies, subjects, measures, ontTypes,
       for(m in measures) {
         BHIScores[[t]][[s]][[m]] <- list()
         for(o in ontTypes) {
-          BHIScores[[t]][[s]][[m]][[o]] <- 
+          BHIScores[[t]][[s]][[m]][[o]] <-
             df[df$topology==t & df$subject==s & df$measure==m & df$ontology==o, "BHI"]
         }
       }

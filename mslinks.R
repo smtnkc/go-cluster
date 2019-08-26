@@ -29,7 +29,7 @@ nodes <- getNodes(slinks)
 readDegs <- function(FC, pval, subjects) {
   degs <- list()
   for(s in subjects) {
-    fname <- paste("DEGs/", s, "_fc", Stringify(FC), 
+    fname <- paste("DEGs/", s, "_fc", Stringify(FC),
                    "_p", Stringify(pval), ".csv", sep = "")
     cat("Reading", fname, "...\n")
     degs[[s]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))[,1]
@@ -62,18 +62,18 @@ FilterLinks <- function(dfLinks, filterIds, cutoff) {
   dfTmp <- dfLinks
   nAll <- nrow(dfTmp)
   cat("Total links =", nAll,"\n")
-  
+
   dfTmp <- dfTmp[dfTmp[, 1] %in% filterIds, ]
   dfTmp <- dfTmp[dfTmp[, 2] %in% filterIds, ]
   nMapped <- nrow(dfTmp)
   cat("Mapped links =", nMapped, "   ", round(nMapped*100/nAll, 1), "%\n")
-  
+
   # Omit insignificant links
   if(!missing(cutoff) && !is.null(cutoff))
     dfTmp <- dfTmp[dfTmp[, 3] >= cutoff, ]
   nSig <- nrow(dfTmp)
   cat("Significant links =", nSig, "   ", round(nSig*100/nAll,1), "%\n\n")
-  
+
   row.names(dfTmp) <- NULL
   return(dfTmp)
 }
@@ -97,7 +97,7 @@ getMsDegVals <- function(msNodes, degVals) {
   for(t in names(msNodes)) {
     for(s in names(degVals)) {
       DV <- degVals[[s]]
-      msDegs[[t]][[s]] <- DV[row.names(DV) %in% msNodes[[t]], ] 
+      msDegs[[t]][[s]] <- DV[row.names(DV) %in% msNodes[[t]], ]
     }
   }
   return(msDegs)

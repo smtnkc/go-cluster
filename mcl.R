@@ -123,7 +123,7 @@ writeMCL <- function(gosimMCL, naming) {
       for(m in names(gosimMCL[[t]][[s]])) {
         for(o in names(gosimMCL[[t]][[s]][[m]])) {
           df <- gosimMCL[[t]][[s]][[m]][[o]]
-          fname <- paste("RES/MCL/CLUSTERS/by", naming, "/", t, 
+          fname <- paste("RES/MCL/CLUSTERS/by", naming, "/", t,
                          "_", s, "_", m, "_", o, ".csv", sep = "")
           cat(fname, "...\n")
           write.table(df, fname, row.names = FALSE, col.names = TRUE, sep=",")
@@ -138,7 +138,7 @@ writeMCL <- function(gosimMCL, naming) {
 readMCL <- function(topologies, subjects, measures, ontTypes, includeComb, naming) {
   gosimMCL <- list()
   if(includeComb) measures <- c(measures, "Comb")
-  
+
   for(t in topologies) {
     for(s in subjects) {
       for(m in measures) {
@@ -167,7 +167,7 @@ readBHIScores <- function(type, topologies, subjects, measures, ontTypes,
       for(m in measures) {
         BHIScores[[t]][[s]][[m]] <- list()
         for(o in ontTypes) {
-          BHIScores[[t]][[s]][[m]][[o]] <- 
+          BHIScores[[t]][[s]][[m]][[o]] <-
             df[df$topology==t & df$subject==s & df$measure==m & df$ontology==o, "BHI"]
         }
       }
@@ -190,22 +190,22 @@ drawClusters <- function(gosimObj, gosimMCL, naming, BHIScores) {
           edges <- gosimObj[[t]][[s]][[m]][[o]]
           edges <- edges[edges[,1] %in% nodes$node, ]
           edges <- edges[edges[,2] %in% nodes$node, ]
-          
+
           if(nrow(nodes) != 0 && nrow(edges) != 0) {
             net <- graph_from_data_frame(d=edges, vertices=nodes, directed=F)
             V(net)$color <- V(net)$cluster + 1
-            
+
             fname <- paste("PLOTS/CLUSTERS/MCL/by", naming, "/", t,
                            "_", s, "_", m, "_", o, ".png", sep="")
             cat(fname, "...\n")
             png(filename=fname, width = 2280, height = 2280)
             lay <- layout_in_circle(net)
-            
+
             info1 <- paste("Topology: ", toupper(t),
                            "     Subject: ", toupper(s),
                            "     Measure: ", toupper(m),
                            "     Ontology: ", toupper(o), sep="")
-            
+
             info2 <- paste(
               "Total nodes: " , nrow(gosimMCL[[t]][[s]][[m]][[o]]),
               "     Clustered nodes: ", length(V(net)[V(net)$cluster != -1]),
@@ -214,7 +214,7 @@ drawClusters <- function(gosimObj, gosimMCL, naming, BHIScores) {
             if(naming == "PROBEID") {
               info2 <- paste(info2, "     BHI: ", BHIScores[[t]][[s]][[m]][[o]], sep="")
             }
-            
+
             plot(net, layout=lay,
                  vertex.label=nodes$node, vertex.shape="circle",
                  vertex.size=4, #vertex.size=nchar(as.character(nodes$node))*4+5, vertex.size2=10,
@@ -222,10 +222,10 @@ drawClusters <- function(gosimObj, gosimMCL, naming, BHIScores) {
                  vertex.frame.color="gray50", vertex.label.family="Helvetica",
                  edge.width=1, edge.label.color="black",
                  edge.color="gray50", edge.curved=0, edge.label.family="Helvetica")
-            
+
             mtext(info1, side=3, line=0, cex=3)
             mtext(info2, side=1, line=0, cex=3)
-            
+
             dev.off()
           }
         }

@@ -54,7 +54,7 @@ NAMING <- "SYMBOL"
 readClusters <- function(type, topologies, subjects, measures, ontTypes, includeComb, naming) {
   gosimX <- list()
   if(includeComb) measures <- c(measures, "Comb")
-  
+
   for(t in topologies) {
     for(s in subjects) {
       for(m in measures) {
@@ -95,17 +95,17 @@ printClusterStats <- function(clusters) {
             df <- clusters[[c]][[t]][[s]][[m]][[o]]
             nn_temp <- length(unique(df[df$cluster != 9999,]$node))
             nc_temp <- length(unique(df[df$cluster != 9999,]$cluster))
-            if(nc_temp == 0) { 
+            if(nc_temp == 0) {
               d_temp <- 0
             }
             else {
               d_temp <- round(nn_temp/nc_temp,1)
             }
-            
+
             dfAll <- rbind(dfAll, data.frame(algorithm = c, topology = t,
                                              subject = s, measure = m, ontology = o,
                                              nn = nn_temp, nc = nc_temp, d = d_temp, stringsAsFactors = FALSE))
-            
+
             nn_total <- nn_total + nn_temp
             nc_total <- nc_total + nc_temp
             n <- n+1
@@ -129,7 +129,7 @@ printClusterStats <- function(clusters) {
       }
     }
   }
-  return(dfAll) 
+  return(dfAll)
   # return(dfAvg)
 }
 dfClusterStats <- printClusterStats(clusters)
@@ -200,7 +200,7 @@ generateDotPlots <- function(dfClusterStats, gosimCounts) {
               axis.text.x=element_text(angle = 45, hjust = 1, face="bold"),
               strip.text.x = element_text(size = 20),
               strip.text.y = element_text(size = 20))
-        
+
     }
   return(plotList)
 }

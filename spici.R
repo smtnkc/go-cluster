@@ -136,7 +136,7 @@ readBHIScores <- function(type, topologies, subjects, measures, ontTypes,
       for(m in measures) {
         BHIScores[[t]][[s]][[m]] <- list()
         for(o in ontTypes) {
-          BHIScores[[t]][[s]][[m]][[o]] <- 
+          BHIScores[[t]][[s]][[m]][[o]] <-
             df[df$topology==t & df$subject==s & df$measure==m & df$ontology==o, "BHI"]
         }
       }
@@ -171,18 +171,18 @@ drawClusters <- function(gosimObj, gosimSpiciExtended, addNonClusteredNodes, nam
             colors <- sample(col_vector, 95, replace = TRUE)
             V(net)[V(net)$cluster == 0]$color <- "gray90"
             V(net)[V(net)$cluster != 0]$color <- colors[V(net)$cluster]
-            
-            fname <- paste("PLOTS/CLUSTERS/SPICi/by", naming , "/", t, 
+
+            fname <- paste("PLOTS/CLUSTERS/SPICi/by", naming , "/", t,
                            "_", s, "_", m, "_", o, ".png", sep="")
             cat(fname, "...\n")
             png(filename=fname, width = 2280, height = 2280)
             lay <- layout_in_circle(net)
-            
+
             info1 <- paste("Topology: ", toupper(t),
                            "     Subject: ", toupper(s),
                            "     Measure: ", toupper(m),
                            "     Ontology: ", toupper(o), sep="")
-            
+
             info2 <- paste(
               "Total nodes: " , nrow(gosimSpiciExtended[[t]][[s]][[m]][[o]]),
               "     Clustered nodes: ", length(V(net)[V(net)$cluster != 9999]),
@@ -191,7 +191,7 @@ drawClusters <- function(gosimObj, gosimSpiciExtended, addNonClusteredNodes, nam
             if(naming == "PROBEID") {
               info2 <- paste(info2, "     BHI: ", BHIScores[[t]][[s]][[m]][[o]], sep="")
             }
-            
+
             plot(net, layout=lay,
                  vertex.label=nodes$node, vertex.shape="circle",
                  vertex.size=4, #vertex.size=nchar(as.character(nodes$node))*4+5, vertex.size2=10,
@@ -199,10 +199,10 @@ drawClusters <- function(gosimObj, gosimSpiciExtended, addNonClusteredNodes, nam
                  vertex.frame.color="gray50", vertex.label.family="Helvetica",
                  edge.width=1, edge.label.color="black",
                  edge.color="gray50", edge.curved=0, edge.label.family="Helvetica")
-            
+
             mtext(info1, side=3, line=0, cex=3)
             mtext(info2, side=1, line=0, cex=3)
-            
+
             dev.off()
           }
         }
