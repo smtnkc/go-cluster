@@ -12,8 +12,8 @@ readClusters <- function(type, topologies, subjects, measures, ontTypes,
     for(s in subjects) {
       for(m in measures) {
         for(o in ontTypes) {
-          fname <- paste("RES/", type, "/CLUSTERS/by", naming, "/", t ,
-                         "_", s, "_", m, "_", o, ".csv", sep="")
+          fname <- paste("RES/", type, "/CLUSTERS/by", naming, "/",
+                         t, "_", s, "_", m, "_", o, ".csv", sep="")
           gosimX[[t]][[s]][[m]][[o]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
         }
       }

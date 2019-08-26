@@ -125,8 +125,8 @@ readLinkcomm <- function(topologies, subjects, measures, ontTypes, includeComb, 
     for(s in subjects) {
       for(m in measures) {
         for(o in ontTypes) {
-          fname <- paste("RES/LINKCOMM/CLUSTERS/by", naming, "/", t ,
-                         "_", s, "_", m, "_", o, ".csv", sep="")
+          fname <- paste("RES/LINKCOMM/CLUSTERS/by", naming, "/",
+                         t, "_", s, "_", m, "_", o, ".csv", sep="")
           gosimLinkcomm[[t]][[s]][[m]][[o]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
         }
       }
@@ -185,8 +185,8 @@ drawClusters <- function(gosimObj, gosimLinkcommExtended, addNonClusteredNodes, 
             V(net)[V(net)$cluster == 0]$color <- "gray90"
             V(net)[V(net)$cluster != 0]$color <- colors[V(net)$cluster]
 
-            fname <- paste("PLOTS/CLUSTERS/LINKCOMM/by", naming , "/", t,
-                           "_", s, "_", m, "_", o, ".png", sep="")
+            fname <- paste("PLOTS/CLUSTERS/LINKCOMM/by", naming , "/",
+                           t, "_", s, "_", m, "_", o, ".png", sep="")
             cat(fname, "...\n")
             png(filename=fname, width = 2280, height = 2280)
             lay <- layout_in_circle(net)

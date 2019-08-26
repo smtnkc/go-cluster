@@ -172,8 +172,8 @@ drawClusters <- function(gosimObj, gosimSpiciExtended, addNonClusteredNodes, nam
             V(net)[V(net)$cluster == 0]$color <- "gray90"
             V(net)[V(net)$cluster != 0]$color <- colors[V(net)$cluster]
 
-            fname <- paste("PLOTS/CLUSTERS/SPICi/by", naming , "/", t,
-                           "_", s, "_", m, "_", o, ".png", sep="")
+            fname <- paste("PLOTS/CLUSTERS/SPICi/by", naming , "/",
+                           t, "_", s, "_", m, "_", o, ".png", sep="")
             cat(fname, "...\n")
             png(filename=fname, width = 2280, height = 2280)
             lay <- layout_in_circle(net)

@@ -43,7 +43,7 @@ createGoSim <- function(msDegLinks, measures, ontTypes) {
           }
           gosim[[t]][[s]][[m]][[o]] <- dfGo
           elapsed_time <- proc.time() - start_time
-          cat(paste(t, ",", s, ",", m, ",", o, ",", round(elapsed_time[[3]],3), sep=""), "\n")
+          cat(paste(t, s, m, o, round(elapsed_time[[3]],3), sep=","), "\n")
         }
       }
     }

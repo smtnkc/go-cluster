@@ -143,8 +143,8 @@ readMCL <- function(topologies, subjects, measures, ontTypes, includeComb, namin
     for(s in subjects) {
       for(m in measures) {
         for(o in ontTypes) {
-          fname <- paste("RES/MCL/CLUSTERS/by", naming, "/", t ,
-                         "_", s, "_", m, "_", o, ".csv", sep="")
+          fname <- paste("RES/MCL/CLUSTERS/by", naming, "/",
+                         t, "_", s, "_", m, "_", o, ".csv", sep="")
           gosimMCL[[t]][[s]][[m]][[o]] <- as.data.frame(fread(fname, header = TRUE, sep = ','))
         }
       }
@@ -195,8 +195,8 @@ drawClusters <- function(gosimObj, gosimMCL, naming, BHIScores) {
             net <- graph_from_data_frame(d=edges, vertices=nodes, directed=F)
             V(net)$color <- V(net)$cluster + 1
 
-            fname <- paste("PLOTS/CLUSTERS/MCL/by", naming, "/", t,
-                           "_", s, "_", m, "_", o, ".png", sep="")
+            fname <- paste("PLOTS/CLUSTERS/MCL/by", naming, "/",
+                           t, "_", s, "_", m, "_", o, ".png", sep="")
             cat(fname, "...\n")
             png(filename=fname, width = 2280, height = 2280)
             lay <- layout_in_circle(net)
