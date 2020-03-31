@@ -46,9 +46,10 @@ You first need download and export the PPI data (i.e. link files) into ``LINKS/`
 * ``msLinks.R`` responsible from filtering out unmapped and insignificant PPIs.
 * ``go.R`` fetches GO information and calculates the GO similarity scores.
 * ``spici.R``, ``mcl.R``, ``linkcomm.R`` performs the clustering operations.
-* ``validation.R`` calculates BHI scores for the clusters.
+* ``bhi.R`` calculates Biological Homogeneity Index for the clusters.
+* ``validation.R`` 
 * ``plot.R`` responsible from generating the plots for the obtained results.
-* ``stats.R``, ``validationStats.R`` creates tables including statistics about the clustering or validation.
+* ``stats.R``, ``bhi_stats.R`` creates tables including statistics about the clustering or validation.
 
 
 ## Dependencies:
@@ -56,4 +57,4 @@ It is highly recommended to install all packages required in the ``vars.R`` file
 
 To overcome possible dependency problems, please run the scripts in the following order, and note that all scripts depend to ``vars.R`` which manages the packages as well as the global paths, files, and variables:
 
-``vars.R`` :arrow_right: ``degs.R`` :arrow_right: ``links.R`` :arrow_right: ``msLinks.R`` :arrow_right: ``go.R`` :arrow_right: ``validation.R`` :arrow_right: ``spici.R || mcl.R || linkcomm.R || plot.R || stats.R``
+``vars.R`` :arrow_right: ``degs.R`` :arrow_right: ``links.R`` :arrow_right: ``msLinks.R`` :arrow_right: ``go.R`` :arrow_right: ``spici.R || mcl.R || linkcomm.R`` :arrow_right: ``bhi.R`` :arrow_right: ``validation.R`` :arrow_right: ``plot.R || stats.R || bhi_stats.R``
