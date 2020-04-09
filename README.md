@@ -17,7 +17,7 @@ You first need download and export the PPI data (i.e. link files) into ``LINKS/`
 
 ## Pipeline:
 
-![Pipeline](pipeline.png)
+<a target="_blank" rel="noopener noreferrer" href="https://raw.githubusercontent.com/smtnkc/go-cluster/master/pipeline.png"><img src="https://raw.githubusercontent.com/smtnkc/go-cluster/master/pipeline.png" alt="Pipeline" style="max-width:600px;"></a>
 
 ## Scripts:
 
