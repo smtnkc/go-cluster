@@ -15,28 +15,9 @@ You first need download and export the PPI data (i.e. link files) into ``LINKS/`
 3) Update the variables in the ``vars.R`` file to match your Gene Expression and PPI data. It is necessary to reassign the ranges (i.e., ``intervals``) in order to correctly separate the control group and each disease group in Gene Expression matrix. It is also necessary to reset the ``cutoff`` value for PPI scores used in PPIN reduction. In ``vars.R``, you can also change the t-test significance (``P_VAL``) and the fold-change threshold (``FC``) that are used in the DEG analysis.
 
 
-## System Pipeline:
+## Pipeline:
 
-```mermaid
-1. Process Gene Expression Data:
-   → Filter out or modify null and invalid cells
-   → Apply median-based aggregation to duplicated rows (probes)
-   → Define column-ranges and split matrix into disease groups
-   → Identify DEGs by p-value ≤ 0.05 and log2(FC) ≥ 1
-2. Process Protein-Protein Interaction Data:
-   → Reduce networks' size by using a confidence-threshold
-   → Filter out the nodes that cannot be mapped with the GE data
-3. Construct Disease Networks:
-   → Calculate GO similarity scores for each connected gene pair using
-     different topology, similarity, and ontology configurations
-   → Set edge-weights as the obtained GO similarity scores
-4. Perform Clustering by MCL, SPICi, and LinkComm
-5. Select the best configuration for clustering:
-   → Evaluate the Biological Homogeneity of each configuration
-6. Obtain the common disease modules:
-   → Overlap the disease networks obtained by the best configuration
-7. Validate gene-disease associasions on DisGeNet and validation set
-```
+![Pipeline](pipeline.png)
 
 ## Scripts:
 
