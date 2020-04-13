@@ -221,3 +221,38 @@ overlap
 
 original_markers <- scan("VALS/GSE40234_markers.txt", character(), quote = "")
 Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=original_markers))
+
+
+
+################################### GSE3585 & GPL96 #############################
+
+gse_cad <- as.data.frame(fread("VALS/GSE3585.txt", header = TRUE, sep = '\t'))
+row.names(gse_cad) <- gse_cad[, 1]
+gse_cad[,1] <- NULL
+gpl_cad <- as.data.frame(fread("VALS/GPL96.csv", header = TRUE, sep = ','))
+groups_cad <- as.data.frame(fread("VALS/GSE12288_GROUPS.csv", header = TRUE, sep = ';'))
+controls <- c(1:5)
+cases <- c(6:12)
+
+overlap <- getOverlap(gse_cad, gpl_cad, "ID", " \\/// |-")
+overlap
+# setdiff(union(ms_cad,t2d_cad), overlap)
+
+sigs <- getSigDf(gse_cad, 0.05, controls, cases)
+overlap <- getOverlap(sigs, gpl_cad, "ID", " \\/// |-")
+overlap
+# setdiff(union(ms_cad,t2d_cad), overlap)
+
+degs <- getDegDf(gse_cad, 1, controls, cases)
+overlap <- getOverlap(degs, gpl_cad, "ID", " \\/// |-")
+overlap
+# setdiff(union(ms_cad,t2d_cad), overlap)
+
+sigDegs <- getDegDf(sigs, 1, controls, cases)
+overlap <- getOverlap(sigDegs, gpl_cad, "ID", " \\/// |-")
+overlap
+# setdiff(union(ms_cad,t2d_cad), overlap)
+
+
+
+

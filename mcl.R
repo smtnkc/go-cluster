@@ -88,7 +88,8 @@ getMCL <- function(adjMatrices) {
 
 #gosimMCL <- getMCL(adjMatrices)
 
-updateClusterIDs <- function(gosimMCL) {
+arrangeClusterIDs <- function(gosimMCL) {
+  # This function arranges all the cluster IDs to be consecutive numbers
   updatedGosimMCL <- list()
   for(t in names(gosimMCL)) {
     for(s in names(gosimMCL[[t]])) {
@@ -113,7 +114,7 @@ updateClusterIDs <- function(gosimMCL) {
   return(updatedGosimMCL)
 }
 
-#gosimMCL <- updateClusterIDs(gosimMCL)
+#gosimMCL <- arrangeClusterIDs(gosimMCL)
 
 ##########################################################
 
