@@ -2,6 +2,12 @@ if (!require('readr')) install.packages('readr')
 if (!require('rstudioapi')) install.packages('rstudioapi')
 if (!require('data.table')) install.packages('data.table')
 
+#   Differential expression analysis with limma
+library(Biobase)
+library(GEOquery)
+library(limma)
+
+
 rm(list=ls())
 setwd(dirname(getSourceEditorContext()$path))
 
@@ -11,248 +17,188 @@ ms_cad  <- list("ANAPC2","ARPC1B","COX5A","ENTPD2","FRG1",
                 "NFKBIB","PCGF6","POLR2L","RPS9","S100A8",
                 "SIX3","TNFRSF13B","TNFSF13","VPS28")
 
-getSigDf <- function(df, pval, controlRange, caseRange) {
-  sigGenes <- c()
-  invalidRows <- c()
-  for(r in 1:nrow(df)) {
-    if(length(levels(factor(as.numeric(df[r, ])))) == 1) {
-      #### eliminate the constant rows to overcome "t-test data are essentially constant" error
-      invalidRows <- c(invalidRows, row.names(df)[r])
-    }
-    else if(t.test(df[r, controlRange], df[r, caseRange])$p.val <= pval) {
-      sigGenes <- c(sigGenes, row.names(df)[r])
-    }
-  }
-  cat("There are", length(invalidRows), "invalid rows:", invalidRows, "\n")
-  sigDf <- subset(df, row.names(df) %in% sigGenes)
-  return(sigDf)
-}
+getValSetDEGs <- function(valGSE, valGPL, valGSMS, P_VAL, FC, N, normalization) {
+  gset <- getGEO(valGSE, GSEMatrix =TRUE, AnnotGPL=TRUE)
+  if (length(gset) > 1) idx <- grep(valGPL, attr(gset, "names")) else idx <- 1
+  gset <- gset[[idx]]
+  
+  # make proper column names to match toptable 
+  fvarLabels(gset) <- make.names(fvarLabels(gset))
+  
+  # group names for all samples
+  gsms <- valGSMS
+  sml <- c()
+  for (i in 1:nchar(gsms)) { sml[i] <- substr(gsms,i,i) }
+  
+  if(normalization) exprs(gset) <- log2(exprs(gset))
+  
+  # set up the data and proceed with analysis
+  sml <- paste("G", sml, sep="")    # set group names
+  fl <- as.factor(sml)
+  gset$description <- fl
+  design <- model.matrix(~ description + 0, gset)
+  colnames(design) <- levels(fl)
+  fit <- lmFit(gset, design)
+  cont.matrix <- makeContrasts(G1-G0, levels=design)
+  fit2 <- contrasts.fit(fit, cont.matrix)
+  fit2 <- eBayes(fit2, 0.01)
 
-getDegDf <- function(df, FC, controlRange, caseRange) {
-  degGenes <- c()
-  for(r in 1:nrow(df)) {
-    controlMean <- apply(df[r, controlRange], 1, mean)
-    caseMean <- apply(df[r, caseRange], 1, mean)
-    if(abs(controlMean-caseMean) >= FC) {
-      degGenes <- c(degGenes, row.names(df)[r])
-    }
-  }
-  degDf <- subset(df, row.names(df) %in% degGenes)
-  return(degDf)
-}
-
-getOverlap <- function(valDf, gpl, gplIDCol, parserRegex) {
-  gene_symbols <- gpl[gpl[,gplIDCol] %in% row.names(valDf), 2]
-  if(!is.null(parserRegex)) {
-    gene_symbols_parsed <- c()
-    for(e in gene_symbols) {
-      for(x in strsplit(e, parserRegex)) {
-        gene_symbols_parsed <- c(gene_symbols_parsed, x)
+  tT <- topTable(fit2, adjust="none", sort.by="B", p.value=P_VAL, lfc=FC, number=N)
+  
+  degs_parsed <- c()
+  if(nrow(tT) > 0) {
+    tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","t","B","logFC","Gene.symbol","Gene.title"))
+    for(e in tT$Gene.symbol) {
+      for(x in strsplit(e, "\\///|-")) {
+        degs_parsed <- c(degs_parsed, x)
       }
     }
-    overlap <- Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=gene_symbols_parsed))
   }
-  else {
-    overlap <- Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=gene_symbols))
-  }
-  return(overlap)
+  return(degs_parsed)
+  # return(tT)
 }
 
 
-######################################## GSE133099 ###############################
+###### CAD
 
-gse_lean <- as.data.frame(fread("VALS/GSE133099_DIAB_LEAN.csv", header = TRUE, sep = ','))
-gse_obese <- as.data.frame(fread("VALS/GSE133099_DIAB_OBESE.csv", header = TRUE, sep = ','))
-gse_all <- unique(union(gse_lean[["gene_symbol"]], gse_obese[["gene_symbol"]]))
-overlap <- Reduce(intersect, list(v1=union(ms_cad,t2d_cad), v2=gse_all))
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
-
-
-sigs_lean <- gse_lean[which(gse_lean$pvalue <= 0.05),]
-sigs_obese <- gse_obese[which(gse_obese$pvalue <= 0.05),]
-sigs_all <- union(sigs_lean[["gene_symbol"]], sigs_obese[["gene_symbol"]])
-overlap <- Reduce(intersect, list(v1=union(ms_cad,t2d_cad), v2=sigs_all))
-overlap
+valSetDEGs <- getValSetDEGs("GSE12288", "GPL96",
+                            paste0("00000000000000000000000000000000001101111111110111",
+                                   "11101011011101111010010111101111001011010111000010",
+                                   "11111111111011010001101111111111011001110110110001",
+                                   "01110001110100000010110001110101000010111001000000",
+                                   "0000000101101011111000"), 0.05, 1, Inf, FALSE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
 
-degs_lean <- gse_lean[which(abs(gse_lean$log2FoldChange) >= 1),]
-degs_obese <- gse_obese[which(abs(gse_obese$log2FoldChange) >= 1),]
-degs_all <- union(degs_lean[["gene_symbol"]], degs_obese[["gene_symbol"]])
-overlap <- Reduce(intersect, list(v1=union(ms_cad,t2d_cad), v2=degs_all))
-overlap
+valSetDEGs <- getValSetDEGs("GSE3585", "GPL96", "000001111111", 0.05, 1, Inf, FALSE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
+# valSetDEGs <- getValSetDEGs("GSE109048", "GPL17586", "?", 0.05, 1, Inf, TRUE)
+# Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-sigDegs_lean <- gse_lean[which(abs(gse_lean$log2FoldChange) >= 1 & gse_lean$pvalue <= 0.05),]
-sigDegs_obese <- gse_obese[which(abs(gse_obese$log2FoldChange) >= 1 & gse_obese$pvalue <= 0.05),]
-sigDegs_all <- union(sigDegs_lean[["gene_symbol"]], sigDegs_obese[["gene_symbol"]])
-overlap <- Reduce(intersect, list(v1=union(ms_cad,t2d_cad), v2=sigDegs_all))
-overlap
+# valSetDEGs <- getValSetDEGs("GSE42148", "GPL13607", "?", 0.05, 1, Inf, TRUE)
+# Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
+valSetDEGs <- getValSetDEGs("GSE18608", "GPL570", "1X1X1X1X1X1X1X1X1X1X0000", 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
+valSetDEGs <- getValSetDEGs("GSE9820", "GPL6255",
+                            paste0("1101010010011100000111101011100",
+                                   "1100111100100111010010110100011",
+                                   "1010011000110111010011001110110",
+                                   "1011111001100110100111110101101",
+                                   "01111010111110010110100110100"), 0.05, 1, Inf, FALSE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
+valSetDEGs <- getValSetDEGs("GSE4172", "GPL570", "011111111000", 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
+icdc <- c("11111111011111101111111110010","1X1XXX1101XXX110111X1X1XX00X0","X1X111XX0X111XX0XXX1X1X110010")
+valSetDEGs <- getValSetDEGs("GSE42955", "GPL6244", icdc[1], 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-######################################## GSE109048 & GPL17586_V2 ###############################
-gse_cad <- as.data.frame(fread("VALS/GSE109048.csv", header = TRUE, sep = ','))[,1:41]
-gpl_cad <- as.data.frame(fread("VALS/GPL17586_V2.txt", header = TRUE, sep = '\t'))[,c(1,9)]
-colnames(gpl_cad)[1] <- "ID"
-colnames(gpl_cad)[2] <- "Symbol"
-row.names(gse_cad) <- gse_cad[, 1]
-gse_cad[,1] <- NULL
-controls <- c(1:20)
-cases <- c(21:40)
+valSetDEGs <- getValSetDEGs("GSE48060", "GPL570", paste0(strrep("1",30), strrep("0",20), "10"),
+                            0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-overlap <- getOverlap(gse_cad, gpl_cad, "ID", "\\|")
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
+valSetDEGs <- getValSetDEGs("GSE3586", "GPL3050", paste0(strrep("0",15), strrep("1",13)), 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-sigs <- getSigDf(gse_cad, 0.05, controls, cases)
-overlap <- getOverlap(sigs, gpl_cad, "ID", "\\|")
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
+valSetDEGs <- getValSetDEGs("GSE1145", "GPL8300", "1111111XXXXXX0000", 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-degs <- getDegDf(gse_cad, 1, controls, cases)
-overlap <- getOverlap(degs, gpl_cad, "ID", "\\|")
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
+valSetDEGs <- getValSetDEGs("GSE9128", "GPL96", "00011111111", 0.05, 1, Inf, FALSE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-sigDegs <- getDegDf(sigs, 1, controls, cases)
-overlap <- getOverlap(sigDegs, gpl_cad, "ID", "\\|")
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
+###### T2D
 
-original_markers <- c("S100A12","FKBP5","CLEC4E","SAMSN1","S100P")
-Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=original_markers))
+valSetDEGs <- getValSetDEGs("GSE40234", "GPL6480",
+                            "11111110010101001001101001000110111010101000110000110001111111", 0.05, 1, Inf, FALSE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-################################### GSE12288 & GPL96 #############################
+valSetDEGs <- getValSetDEGs("GSE16415", "GPL2986", "0000011111", 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-gse_cad <- as.data.frame(fread("VALS/GSE12288.csv", header = TRUE, sep = ','))
-row.names(gse_cad) <- gse_cad[, 1]
-gse_cad[,1] <- NULL
-gpl_cad <- as.data.frame(fread("VALS/GPL96.csv", header = TRUE, sep = ','))
-groups_cad <- as.data.frame(fread("VALS/GSE12288_GROUPS.csv", header = TRUE, sep = ';'))
-controls <- groups_cad[groups_cad$group == "control",1]
-cases <- groups_cad[groups_cad$group == "case",1]
+valSetDEGs <- getValSetDEGs("GSE26168", "GPL6883", "00000000XXXXXXX111111111", 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-overlap <- getOverlap(gse_cad, gpl_cad, "ID", " \\/// |-")
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
+valSetDEGs <- getValSetDEGs("GSE23343", "GPL570", "00000001111111111", 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-sigs <- getSigDf(gse_cad, 0.05, controls, cases)
-overlap <- getOverlap(sigs, gpl_cad, "ID", " \\/// |-")
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
+valSetDEGs <- getValSetDEGs("GSE25462", "GPL570", "00000000000000000000000000000000000011111111110000", 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-degs <- getDegDf(gse_cad, 1, controls, cases)
-overlap <- getOverlap(degs, gpl_cad, "ID", " \\/// |-")
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
+valSetDEGs <- getValSetDEGs("GSE15653", "GPL96", "00000000011111XXXX", 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-sigDegs <- getDegDf(sigs, 1, controls, cases)
-overlap <- getOverlap(sigDegs, gpl_cad, "ID", " \\/// |-")
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
+valSetDEGs <- getValSetDEGs("GSE20966", "GPL1352", "00000000001111111111", 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
+valSetDEGs <- getValSetDEGs("GSE12643", "GPL8300", "11111111110000000000", 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-original_markers <- scan("VALS/GSE12288_markers.txt", character(), quote = "")
-Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=original_markers))
+valSetDEGs <- getValSetDEGs("GSE38642", "GPL6244", "000000000011000000000000000000000000001100000111000000000000110",
+                            0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
+valSetDEGs <- getValSetDEGs("GSE25724", "GPL96", "0000000111111", 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-################################### GSE42148 & GPL13607 #############################
+valSetDEGs <- getValSetDEGs("GSE13760", "GPL571", "101100010000101001111", 0.05, 1, Inf, FALSE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-gse_cad <- as.data.frame(fread("VALS/GSE42148.csv", header = TRUE, sep = ','))
-row.names(gse_cad) <- gse_cad[, 1]
-gse_cad[,1] <- NULL
-gpl_cad <- as.data.frame(fread("VALS/GPL13607.txt", header = TRUE, sep = '\t'))[,c(1,6)]
-controls <- c(1:11)
-cases <- c(12:24)
+valSetDEGs <- getValSetDEGs("GSE9006", "GPL96",
+                            paste0(strrep("0",20), strrep("X",81), strrep("0",4),
+                                   strrep("1",12)), 0.05, 1, Inf, TRUE)
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-overlap <- getOverlap(gse_cad, gpl_cad, "ID", NULL)
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
+# valSetDEGs <- getValSetDEGs("GSE133099", "GPL16791", "?", 0.05, 1, Inf, TRUE)
+# Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
-sigs <- getSigDf(gse_cad, 0.05, controls, cases)
-overlap <- getOverlap(sigs, gpl_cad, "ID", NULL)
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
+getValSetDEGsUsingMultipleGPLs <- function(valGSE, gplVector) {
+  degs <- c()
+  for(tempGPL in gplVector) {
+    gset <- getGEO(valGSE, GSEMatrix =TRUE, AnnotGPL=TRUE)
+    if (length(gset) > 1) idx <- grep(tempGPL, attr(gset, "names")) else idx <- 1
+    gset <- gset[[idx]]
+    
+    # make proper column names to match toptable 
+    fvarLabels(gset) <- make.names(fvarLabels(gset))
+    
+    # group names for all samples
+    gsms <- "1111100000"
+    sml <- c()
+    for (i in 1:nchar(gsms)) { sml[i] <- substr(gsms,i,i) }
+    
+    # log2 transform
+    # exprs(gset) <- log2(exprs(gset))
+    
+    # set up the data and proceed with analysis
+    sml <- paste("G", sml, sep="")    # set group names
+    fl <- as.factor(sml)
+    gset$description <- fl
+    design <- model.matrix(~ description + 0, gset)
+    colnames(design) <- levels(fl)
+    fit <- lmFit(gset, design)
+    cont.matrix <- makeContrasts(G1-G0, levels=design)
+    fit2 <- contrasts.fit(fit, cont.matrix)
+    fit2 <- eBayes(fit2, 0.01)
+    tT <- topTable(fit2, adjust="none", sort.by="B", p.value=0.05, lfc=1, number=Inf)
+    tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","t","B","logFC","Gene.symbol","Gene.title"))
+    degs <- c(degs, tT$Gene.symbol)
+  }
+  degs <- unique(degs)
+  degs_parsed <- c()
+  for(e in degs) {
+    for(x in strsplit(e, "\\///|-")) {
+      degs_parsed <- c(degs_parsed, x)
+    }
+  }
+  degs_parsed <- unique(degs_parsed)
+  return(degs_parsed)
+}
 
-degs <- getDegDf(gse_cad, 1, controls, cases)
-overlap <- getOverlap(degs, gpl_cad, "ID", NULL)
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
-
-sigDegs <- getDegDf(sigs, 1, controls, cases)
-overlap <- getOverlap(sigDegs, gpl_cad, "ID", NULL)
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
-
-original_markers <- scan("VALS/GSE42148_markers.txt", character(), quote = "")
-Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=original_markers))
-
-################################### GSE40234 & GPL6480 #############################
-
-gse_t2d <- as.data.frame(fread("VALS/GSE40234.csv", header = TRUE, sep = ','))
-row.names(gse_t2d) <- gse_t2d[, 1]
-gse_t2d[,1] <- NULL
-gpl_t2d <- as.data.frame(fread("VALS/GPL6480.txt", header = TRUE, sep = '\t'))[,c(1,7)]
-groups_t2d <- as.data.frame(fread("VALS/GSE40234_GROUPS.csv", header = TRUE, sep = ';'))
-controls <- groups_t2d[groups_t2d$Group == "Sensitive",1]
-cases <- groups_t2d[groups_t2d$Group == "Resistant",1]
-
-overlap <- getOverlap(gse_t2d, gpl_t2d, "ID", NULL)
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
-
-sigs <- getSigDf(gse_t2d, 0.05, controls, cases)
-overlap <- getOverlap(sigs, gpl_t2d, "ID", NULL)
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
-
-degs <- getDegDf(gse_t2d, 1, controls, cases)
-overlap <- getOverlap(degs, gpl_t2d, "ID", NULL)
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
-
-sigDegs <- getDegDf(sigs, 1, controls, cases)
-overlap <- getOverlap(sigDegs, gpl_t2d, "ID", NULL)
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
-
-original_markers <- scan("VALS/GSE40234_markers.txt", character(), quote = "")
-Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=original_markers))
-
-
-
-################################### GSE3585 & GPL96 #############################
-
-gse_cad <- as.data.frame(fread("VALS/GSE3585.txt", header = TRUE, sep = '\t'))
-row.names(gse_cad) <- gse_cad[, 1]
-gse_cad[,1] <- NULL
-gpl_cad <- as.data.frame(fread("VALS/GPL96.csv", header = TRUE, sep = ','))
-groups_cad <- as.data.frame(fread("VALS/GSE12288_GROUPS.csv", header = TRUE, sep = ';'))
-controls <- c(1:5)
-cases <- c(6:12)
-
-overlap <- getOverlap(gse_cad, gpl_cad, "ID", " \\/// |-")
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
-
-sigs <- getSigDf(gse_cad, 0.05, controls, cases)
-overlap <- getOverlap(sigs, gpl_cad, "ID", " \\/// |-")
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
-
-degs <- getDegDf(gse_cad, 1, controls, cases)
-overlap <- getOverlap(degs, gpl_cad, "ID", " \\/// |-")
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
-
-sigDegs <- getDegDf(sigs, 1, controls, cases)
-overlap <- getOverlap(sigDegs, gpl_cad, "ID", " \\/// |-")
-overlap
-# setdiff(union(ms_cad,t2d_cad), overlap)
-
-
-
+valSetDEGs <- getValSetDEGsUsingMultipleGPLs("GSE121",
+                                             c("GPL80","GPL98","GPL99","GPL100","GPL101"))
+Reduce(intersect, list(v1=union(ms_cad, t2d_cad), v2=valSetDEGs))
 
