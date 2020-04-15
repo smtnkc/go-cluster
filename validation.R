@@ -216,5 +216,5 @@ valDEGsCAD <- c("SIX3","TNFSF13","S100A8","NFKBIB","SP1","FRG1","ALAS2")
 valDEGsT2D <- c("POLR2L","ARPC1B","SIX3","NFKBIB","ALAS2","S100A8","SP1","HBD","TNFSF13","LHX2")
 valDEGsALL <- union(union(valDEGsCAD, valDEGsT2D), valDEGsMETS)
 
-
+for(g in sort(valDEGsALL)) cat(paste0(as.name(g), ", "))
 
