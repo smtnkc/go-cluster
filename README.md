@@ -35,7 +35,7 @@ You first need download and export the PPI data (i.e. link files) into ``LINKS/`
 * ``stats.R``, ``bhi_stats.R`` creates tables including statistics about the clustering or validation.
 
 
-## Dependencies:
+## Dependencies
 It is highly recommended to install all packages required in the ``vars.R`` file.
 
 To overcome possible dependency problems, please run the scripts in the following order, and note that all scripts depend to ``vars.R`` which manages the packages as well as the global paths, files, and variables:
