@@ -1,9 +1,10 @@
 # go-cluster
+
 Clustering PPINs by GO similarity scores.
 
 Uses [**STRINGdb**](https://string-db.org/) and [**INet**](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0190029) networks, [**GSE23561**](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE23561) microarray gene expressions data, [**GOSemSim**](https://bioconductor.org/packages/release/bioc/vignettes/GOSemSim/inst/doc/GOSemSim.html) and [**org.Hs.ed.db**](https://bioconductor.org/packages/release/data/annotation/manuals/org.Hs.eg.db/man/org.Hs.eg.db.pdf) packages.
 
-## Running instructions:
+## Running instructions
 You first need download and export the PPI data (i.e. link files) into ``LINKS/`` directory using the download instructions given in ``LINKS/DOWNLOAD.txt``.
 
 **To be able run the pipeline with different Gene Expression and PPI data, you must apply the following changes:**
@@ -15,11 +16,11 @@ You first need download and export the PPI data (i.e. link files) into ``LINKS/`
 3) Update the variables in the ``vars.R`` file to match your Gene Expression and PPI data. It is necessary to reassign the ranges (i.e., ``intervals``) in order to correctly separate the control group and each disease group in Gene Expression matrix. It is also necessary to reset the ``cutoff`` value for PPI scores used in PPIN reduction. In ``vars.R``, you can also change the t-test significance (``P_VAL``) and the fold-change threshold (``FC``) that are used in the DEG analysis.
 
 
-## Pipeline:
+## Pipeline
 
 <a target="_blank" rel="noopener noreferrer" href="https://raw.githubusercontent.com/smtnkc/go-cluster/master/pipeline.png"><img src="https://raw.githubusercontent.com/smtnkc/go-cluster/master/pipeline.png" alt="Pipeline" width="500px"></a>
 
-## Scripts:
+## Scripts
 
 * ``vars.R`` manages the packages, global variables, paths, and I/O files.
 * ``degs.R`` includes the necessary functions to identify differentially expressed genes.
@@ -40,3 +41,7 @@ It is highly recommended to install all packages required in the ``vars.R`` file
 To overcome possible dependency problems, please run the scripts in the following order, and note that all scripts depend to ``vars.R`` which manages the packages as well as the global paths, files, and variables:
 
 ``vars.R`` :arrow_right: ``degs.R`` :arrow_right: ``links.R`` :arrow_right: ``msLinks.R`` :arrow_right: ``go.R`` :arrow_right: ``spici.R || mcl.R || linkcomm.R`` :arrow_right: ``bhi.R || stability.R`` :arrow_right: ``validation.R`` :arrow_right: ``plot.R || stats.R || bhi_stats.R``
+
+## Citation
+
+S. Tenekeci, S. Tekir, Identifying promoter and enhancer sequences by graph convolutional networks, Computational Biology and Chemistry (2024) https://doi.org/10.1016/j.compbiolchem.2024.108040
